@@ -1,0 +1,233 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Card from '../components/Card.astro';
+import { getCollection } from 'astro:content';
+
+// 全カテゴリのコンテンツを取得
+const insights = (await getCollection('insights'))
+  .filter(entry => !entry.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const ideas = (await getCollection('ideas'))
+  .filter(entry => !entry.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const weeklyReviews = (await getCollection('weekly-reviews'))
+  .filter(entry => !entry.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// 統計情報
+const insightsTotal = (await getCollection('insights')).filter(e => !e.data.draft).length;
+const ideasTotal = (await getCollection('ideas')).filter(e => !e.data.draft).length;
+const reviewsTotal = (await getCollection('weekly-reviews')).filter(e => !e.data.draft).length;
+
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<BaseLayout
+  title="ホーム"
+  description="AI、IoT、クラウド技術に関する知見とアイデアを育てる場所"
+>
+  <!-- Hero Section with Background Image -->
+  <section
+    class="relative text-center py-24 mb-12 -mx-4 px-4 bg-cover bg-center bg-no-repeat"
+    style={`background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${baseUrl}hero-background.png);`}
+  >
+    <div class="relative z-10">
+      <!-- Profile Photo -->
+      <div class="mb-8 flex justify-center">
+        <img
+          src={`${baseUrl}profile-photo.png`}
+          alt="日下武紀のプロフィール写真"
+          class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
+        />
+      </div>
+
+      <h2 class="text-5xl md:text-6xl font-bold mb-6 text-white drop-shadow-lg">
+        知識を育てる、<br />アイデアを咲かせる
+      </h2>
+      <p class="text-xl text-white mb-8 max-w-2xl mx-auto drop-shadow-md">
+        AI、IoT、クラウド技術に関する学びと気づきを記録し、<br />
+        育てていくデジタルガーデンへようこそ
+      </p>
+
+      <!-- Stats -->
+      <div class="flex justify-center gap-12 mt-12">
+        <div class="text-center bg-white bg-opacity-90 rounded-lg px-6 py-4 shadow-lg">
+          <div class="text-4xl font-bold text-blue-600">{insightsTotal}</div>
+          <div class="text-gray-700 mt-2 font-medium">Insights</div>
+        </div>
+        <div class="text-center bg-white bg-opacity-90 rounded-lg px-6 py-4 shadow-lg">
+          <div class="text-4xl font-bold text-blue-600">{ideasTotal}</div>
+          <div class="text-gray-700 mt-2 font-medium">Ideas</div>
+        </div>
+        <div class="text-center bg-white bg-opacity-90 rounded-lg px-6 py-4 shadow-lg">
+          <div class="text-4xl font-bold text-blue-600">{reviewsTotal}</div>
+          <div class="text-gray-700 mt-2 font-medium">Weekly Reviews</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Insights Section -->
+  {insights.length > 0 && (
+    <section class="mb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold flex items-center gap-2">
+          <span>💡</span>
+          <span>Insights - 洞察と気づき</span>
+        </h2>
+        <a
+          href={`${baseUrl}insights/`}
+          class="text-blue-600 hover:underline"
+        >
+          すべて見る →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {insights.map((entry) => (
+          <Card
+            title={entry.data.title}
+            description={entry.data.description}
+            url={`${baseUrl}insights/${entry.slug}/`}
+            pubDate={entry.data.pubDate}
+            tags={entry.data.tags}
+            category={entry.data.category}
+            thumbnail={entry.data.thumbnail}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Ideas Section -->
+  {ideas.length > 0 && (
+    <section class="mb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold flex items-center gap-2">
+          <span>💭</span>
+          <span>Ideas - アイデアと構想</span>
+        </h2>
+        <a
+          href={`${baseUrl}ideas/`}
+          class="text-blue-600 hover:underline"
+        >
+          すべて見る →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {ideas.map((entry) => (
+          <Card
+            title={entry.data.title}
+            description={entry.data.description}
+            url={`${baseUrl}ideas/${entry.slug}/`}
+            pubDate={entry.data.pubDate}
+            tags={entry.data.tags}
+            category={entry.data.category}
+            thumbnail={entry.data.thumbnail}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Weekly Reviews Section -->
+  {weeklyReviews.length > 0 && (
+    <section class="mb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold flex items-center gap-2">
+          <span>📅</span>
+          <span>Weekly Reviews - 週次振り返り</span>
+        </h2>
+        <a
+          href={`${baseUrl}weekly-reviews/`}
+          class="text-blue-600 hover:underline"
+        >
+          すべて見る →
+        </a>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {weeklyReviews.map((entry) => (
+          <Card
+            title={entry.data.title}
+            description={entry.data.description}
+            url={`${baseUrl}weekly-reviews/${entry.slug}/`}
+            pubDate={entry.data.pubDate}
+            tags={entry.data.tags}
+            category={entry.data.category}
+            thumbnail={entry.data.thumbnail}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- About Section -->
+  <section class="bg-white rounded-lg shadow p-8 mb-16">
+    <h2 class="text-3xl font-bold mb-6">About This Garden</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div>
+        <h3 class="text-xl font-bold mb-3">デジタルガーデンとは？</h3>
+        <p class="text-gray-700 mb-4">
+          デジタルガーデンは、従来のブログとは異なり、知識とアイデアを「育てる」場所です。
+          記事は時系列ではなく、テーマやつながりによって有機的に組織されています。
+        </p>
+
+        <h3 class="text-xl font-bold mb-3 mt-6">自動化システム</h3>
+        <p class="text-gray-700 mb-3">
+          このデジタルガーデンは、AI技術を活用した自動化システムによって運営されています：
+        </p>
+        <ul class="space-y-2 text-gray-700">
+          <li>🎤 <strong>音声/動画認識</strong> - Whisper AIによる自動文字起こし</li>
+          <li>🏷️ <strong>コンテンツ分類</strong> - Claude AIによる自動分類とタグ付け</li>
+          <li>🔍 <strong>事実確認</strong> - Perplexity AIによる情報の裏付け調査</li>
+          <li>🚀 <strong>自動デプロイ</strong> - GitHub Actionsによる自動公開</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="text-xl font-bold mb-3">Author</h3>
+        <p class="text-2xl font-bold text-blue-600 mb-2">日下 武紀</p>
+        <p class="text-gray-600 mb-3">IoT・クラウド・生成AIエンジニア</p>
+        <p class="text-gray-700 mb-4">
+          製造業向けIoTシステムの設計・開発、クラウドインフラの構築、
+          生成AIを活用したビジネスソリューションの開発に従事。
+        </p>
+        <div class="flex gap-4">
+          <a
+            href="https://github.com/Takenori-Kusaka"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-600 hover:underline"
+          >
+            GitHub
+          </a>
+          <a
+            href={`${baseUrl}resume/`}
+            class="text-blue-600 hover:underline"
+          >
+            Resume
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Empty State -->
+  {insights.length === 0 && ideas.length === 0 && weeklyReviews.length === 0 && (
+    <div class="text-center py-16">
+      <div class="text-6xl mb-4">🌱</div>
+      <h3 class="text-2xl font-bold mb-4">ガーデンを育て始めましょう</h3>
+      <p class="text-gray-600 mb-6">
+        まだコンテンツがありません。自動化システムで最初のコンテンツを追加してください。
+      </p>
+      <p class="text-sm text-gray-500">
+        音声メモや動画を <code class="bg-gray-100 px-2 py-1 rounded">input/</code> フォルダに配置すると、
+        自動的に文字起こし・分類・公開されます。
+      </p>
+    </div>
+  )}
+</BaseLayout>

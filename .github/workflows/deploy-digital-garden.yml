@@ -1,0 +1,70 @@
+name: Deploy Digital Garden to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'digital-garden/**'
+      - 'automation/**'
+      - '.github/workflows/deploy-digital-garden.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: digital-garden/package-lock.json
+
+      - name: Install dependencies
+        working-directory: digital-garden
+        run: npm ci
+
+      - name: Build Astro site
+        working-directory: digital-garden
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./digital-garden/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Create deployment summary
+        run: |
+          echo "## 🎉 Digital Garden Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Deployment Status**: Success" >> $GITHUB_STEP_SUMMARY
+          echo "📅 **Build Time**: $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **Site URL**: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🌱 Content Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "- Insights: $(find digital-garden/src/content/insights -name '*.md' | wc -l)" >> $GITHUB_STEP_SUMMARY
+          echo "- Ideas: $(find digital-garden/src/content/ideas -name '*.md' | wc -l)" >> $GITHUB_STEP_SUMMARY
+          echo "- Weekly Reviews: $(find digital-garden/src/content/weekly-reviews -name '*.md' | wc -l)" >> $GITHUB_STEP_SUMMARY

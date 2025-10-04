@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/Card.astro';
+import { getCollection } from 'astro:content';
+
+const insights = (await getCollection('insights'))
+  .filter(entry => !entry.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<BaseLayout
+  title="Insights"
+  description="洞察と気づき - AI、IoT、クラウド技術に関する学びと発見"
+>
+  <div class="mb-12">
+    <h1 class="text-4xl md:text-5xl font-bold mb-4 flex items-center gap-3">
+      <span>💡</span>
+      <span>Insights</span>
+    </h1>
+    <p class="text-xl text-gray-600">
+      日々の学びから得られた洞察と気づきを記録しています
+    </p>
+  </div>
+
+  {insights.length > 0 ? (
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {insights.map((entry) => (
+        <Card
+          title={entry.data.title}
+          description={entry.data.description}
+          url={`${baseUrl}insights/${entry.slug}/`}
+          pubDate={entry.data.pubDate}
+          tags={entry.data.tags}
+          category={entry.data.category}
+        />
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-16 bg-white rounded-lg shadow">
+      <div class="text-6xl mb-4">🌱</div>
+      <h3 class="text-2xl font-bold mb-4">まだInsightsがありません</h3>
+      <p class="text-gray-600">
+        最初のInsightsを追加して、ガーデンを育て始めましょう
+      </p>
+    </div>
+  )}
+</BaseLayout>

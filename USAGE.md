@@ -1,315 +1,341 @@
 # Usage Guide - Personal Digital Garden & Resume System
 
-This guide covers both systems in this repository: the **Resume Management System** and the **Digital Garden Automation System**.
+このリポジトリには2つのシステムがあります：**履歴書管理システム**と**デジタルガーデン自動化システム**
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
+## 🚀 クイックスタート
+
+### 前提条件
 
 1. **Python 3.9+** with pip installed
 2. **Git** configured with your credentials
-3. **API Keys** (for Digital Garden Automation):
-   - `ANTHROPIC_API_KEY` - For Claude AI classification
-   - `PERPLEXITY_API_KEY` - For research and fact-checking
+3. **Node.js 18+** and npm (Astro用)
+4. **API Keys** (デジタルガーデン自動化用):
+   - `ANTHROPIC_API_KEY` - Claude AI分類用
+   - `GEMINI_API_KEY` - Imagen 4サムネイル生成用（オプション）
+   - `PERPLEXITY_API_KEY` - 事実確認用（オプション）
 
-### Installation
+### インストール
 
 ```bash
-# Clone the repository
+# リポジトリをクローン
 git clone <your-repo-url>
-cd <your-repo-name>
+cd personal
 
-# Create and activate virtual environment
+# Python仮想環境の作成と有効化
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
-# OR
+# または
 venv\Scripts\activate     # Windows
 
-# Install dependencies
-# For both systems:
-pip install -r requirements-full.txt
+# Python依存関係のインストール
+pip install -r requirements.txt
 
-# OR install individually:
-pip install -r requirements.txt              # Resume System only
-pip install -r automation/requirements.txt   # Digital Garden only
+# Astroプロジェクトのセットアップ
+cd digital-garden
+npm install
+cd ..
 ```
 
-## 📄 Resume Management System
+---
 
-Generate professional resumes from YAML data.
+## 🌿 デジタルガーデン自動化システム（メインシステム）
 
-### Usage
+テキスト・音声・動画からAIで構造化されたコンテンツを自動生成。
 
-1. **Edit your profile data**:
+### 環境変数設定
+
+プロジェクトルートに`.env`ファイルを作成：
+
+```bash
+# 必須
+ANTHROPIC_API_KEY=sk-ant-xxxxx
+
+# オプション（機能を有効化する場合）
+GEMINI_API_KEY=xxxxx           # Imagen 4サムネイル生成用
+PERPLEXITY_API_KEY=pplx-xxxxx  # 事実確認用
+
+# モデル設定（オプション）
+CLAUDE_MODEL=claude-3-5-sonnet-20241022
+```
+
+### 基本的な使い方
+
+#### 1. テキストファイルを処理
+
+```bash
+# フル機能で処理（分類 → サムネイル → Mermaid → 事実確認 → Git → GitHub Pages）
+python process_content.py input/text/my-article.txt
+
+# オプション付きで処理
+python process_content.py input/text/my-article.txt --no-thumbnail  # サムネイルなし
+python process_content.py input/text/my-article.txt --no-git       # Git操作なし
+python process_content.py input/text/my-article.txt --no-push      # コミットのみ
+```
+
+#### 2. ディレクトリ全体を処理
+
+```bash
+# input/text/ 内の全.txtファイルを一括処理
+python process_content.py input/text/
+```
+
+#### 3. 個別システムの実行
+
+```bash
+# Claude分類のみ
+PYTHONPATH=. python automation/digital_garden_classifier.py input/text/article.txt
+
+# ビジュアル強化のみ（サムネイル + Mermaid）
+python automation/visual_enhancer.py digital-garden/src/content/insights/article.md
+
+# 事実確認のみ
+python automation/fact_checker.py digital-garden/src/content/insights/article.md
+
+# Git自動化のみ
+python automation/git_automation.py deploy
+```
+
+### 自動処理フロー
+
+```
+テキスト入力
+    ↓
+[1] Claude分類システム
+    ├─ カテゴリ判定（insights/ideas/weekly-reviews）
+    ├─ タイトル生成
+    ├─ タグ付け
+    └─ マークダウン構造化
+    ↓
+[2] ビジュアル強化
+    ├─ Imagen 4でサムネイル生成
+    └─ ClaudeでMermaid図表生成
+    ↓
+[3] 事実確認
+    ├─ Perplexity APIで技術的主張を検証
+    └─ 引用情報を追加
+    ↓
+[4] Astroビルド
+    └─ 静的サイト生成
+    ↓
+[5] Git自動化
+    ├─ Claudeでコミットメッセージ生成
+    ├─ 変更をコミット
+    └─ GitHub Pagesにプッシュ
+    ↓
+✅ デプロイ完了！
+```
+
+### コマンドラインオプション
+
+| オプション | 説明 | デフォルト |
+|------------|------|-----------|
+| `--no-thumbnail` | サムネイル生成を無効化 | 有効 |
+| `--no-mermaid` | Mermaid図表生成を無効化 | 有効 |
+| `--no-fact-check` | 事実確認を無効化 | 有効 |
+| `--no-git` | Git操作を無効化 | 有効 |
+| `--no-push` | プッシュせずコミットのみ | プッシュする |
+
+### カスタマイズ例
+
+```bash
+# ローカル確認用（Gitなし、サムネイルなし、事実確認なし）
+python process_content.py input/text/draft.txt --no-git --no-thumbnail --no-fact-check
+
+# コミットのみ（プッシュしない）
+python process_content.py input/text/article.txt --no-push
+
+# 分類とビジュアルのみ
+python process_content.py input/text/quick-note.txt --no-fact-check --no-git
+```
+
+---
+
+## 📄 履歴書管理システム
+
+YAMLデータから専門的な履歴書を生成。
+
+### 使い方
+
+1. **プロフィールデータを編集**:
    ```bash
-   # Edit the main profile file
    nano data/profile.yml
    ```
 
-2. **Generate resume**:
+2. **履歴書生成**:
    ```bash
-   # Run the resume generation
    python src/main.py
    ```
 
-3. **Check output**:
+3. **出力を確認**:
    - Markdown: `output/resume.md`
    - HTML: `output/resume.html`
 
-### Customization
+### カスタマイズ
 
-- **Template**: Edit `templates/resume_template.md`
-- **Styling**: Modify `templates/styles/web_style.css`
-- **Data Structure**: See `data/schema.yml` for reference
+- **テンプレート**: `templates/resume_template.md`を編集
+- **スタイリング**: `templates/styles/web_style.css`を変更
+- **データ構造**: `data/schema.yml`を参照
 
-## 🤖 Digital Garden Automation System
+---
 
-Transform audio, video, and text into structured digital garden content using AI.
+## 🎯 コンテンツカテゴリ
 
-### Setup
+デジタルガーデンシステムが自動分類するカテゴリ：
 
-1. **Configure API keys**:
-   ```bash
-   export ANTHROPIC_API_KEY="your-claude-api-key"
-   export PERPLEXITY_API_KEY="your-perplexity-api-key"
-   ```
+- **💡 Insights** (`insights/`): 技術的学び、洞察、トラブルシューティング
+- **💭 Ideas** (`ideas/`): アイデア、構想、システム設計
+- **📅 Weekly Reviews** (`weekly-reviews/`): 週次振り返り、進捗報告
 
-2. **Test the system**:
-   ```bash
-   python automation/run_automation.py --test-components
-   ```
+---
 
-### Basic Usage
+## 🔧 ディレクトリ構造
 
-1. **Add content to input directories**:
-   ```bash
-   # Audio files (.mp3, .wav, .flac, etc.)
-   cp my_recording.mp3 input/audio/
+```
+personal/
+├── automation/                        # 自動化システム
+│   ├── digital_garden_classifier.py  # Claude分類
+│   ├── visual_enhancer.py            # ビジュアル強化
+│   ├── fact_checker.py               # 事実確認
+│   ├── git_automation.py             # Git自動化
+│   ├── integrated_pipeline.py        # 統合パイプライン
+│   └── utils/
+│       └── env_loader.py             # 環境変数管理
+│
+├── input/                            # 入力ファイル（gitignore）
+│   ├── text/                         # テキストファイル
+│   ├── audio/                        # 音声ファイル（将来）
+│   └── video/                        # 動画ファイル（将来）
+│
+├── digital-garden/                   # Astroサイト
+│   ├── src/
+│   │   ├── content/                  # コンテンツコレクション
+│   │   │   ├── insights/
+│   │   │   ├── ideas/
+│   │   │   └── weekly-reviews/
+│   │   ├── pages/                    # ページテンプレート
+│   │   ├── layouts/                  # レイアウトコンポーネント
+│   │   └── components/               # UIコンポーネント
+│   └── public/
+│       └── images/                   # 生成画像
+│           └── thumbnails/
+│
+├── process_content.py                # メインエントリーポイント
+├── requirements.txt                  # Python依存関係
+└── .env                              # 環境変数（gitignore）
+```
 
-   # Video files (.mp4, .mov, .mkv, etc.)
-   cp my_video.mp4 input/video/
+---
 
-   # Text files (.txt, .md, .rtf)
-   cp my_notes.txt input/text/
-   ```
+## 🐛 トラブルシューティング
 
-2. **Run automation**:
-   ```bash
-   # Process all input files
-   python automation/run_automation.py
+### よくある問題
 
-   # Or with verbose output
-   python automation/run_automation.py --verbose
-   ```
-
-3. **Check results**:
-   - Generated content: `digital-garden/src/content/`
-   - Categories: `insights/`, `diary/`, `resume/`, `profile/`
-   - Processing logs: `logs/automation.log`
-
-### Advanced Usage
-
-#### Custom Configuration
+#### 1. ModuleNotFoundError: No module named 'automation'
 
 ```bash
-# Create custom config
-cp automation/config/default.yaml automation/config/custom.yaml
-nano automation/config/custom.yaml
+# 解決方法: PYTHONPATH を設定
+export PYTHONPATH=.  # Linux/Mac
+set PYTHONPATH=.     # Windows
 
-# Run with custom config
-python automation/run_automation.py --config automation/config/custom.yaml
+# または、プロジェクトルートから実行
+python -m automation.digital_garden_classifier input/text/article.txt
 ```
 
-#### Dry Run Mode
+#### 2. ANTHROPIC_API_KEY not found
 
 ```bash
-# Preview what would be processed without making changes
-python automation/run_automation.py --dry-run --verbose
+# .envファイルがプロジェクトルートにあることを確認
+ls -la .env
+
+# 環境変数が正しく読み込まれているか確認
+python -c "from automation.utils.env_loader import load_environment; load_environment(); import os; print(os.getenv('ANTHROPIC_API_KEY'))"
 ```
 
-#### Status and Monitoring
+#### 3. Imagen 4画像生成エラー
 
 ```bash
-# Check system status
-python automation/run_automation.py --status
-
-# Clean up old files and cache
-python automation/run_automation.py --cleanup
+# サムネイル生成を無効化して実行
+python process_content.py input/text/article.txt --no-thumbnail
 ```
 
-## 🔧 Configuration
-
-### Resume System Configuration
-
-Edit `data/profile.yml` with your information:
-
-```yaml
-profile:
-  personal:
-    name: "Your Name"
-    age: 30
-    location: "Tokyo, Japan"
-    email: "your@email.com"
-
-  career:
-    companies:
-      - name: "Company Name"
-        position: "Your Position"
-        duration: "2020-2025"
-        projects:
-          - name: "Project Name"
-            description: "What you accomplished"
-```
-
-### Digital Garden Configuration
-
-Main settings in `automation/config/default.yaml`:
-
-```yaml
-# Transcription settings
-transcription:
-  model_name: "kotoba-tech/kotoba-whisper-v2.0"
-  device: "auto"  # auto, cpu, cuda
-  min_confidence: 0.7
-
-# AI processing
-classification:
-  model: "claude-3-5-sonnet-20241022"
-  temperature: 0.7
-
-# Git automation
-git:
-  auto_push: true
-  create_pr: true
-```
-
-### Environment Variables
+#### 4. Perplexity API エラー
 
 ```bash
-# Required for Digital Garden Automation
-export ANTHROPIC_API_KEY="your_claude_api_key"
-export PERPLEXITY_API_KEY="your_perplexity_api_key"
-
-# Optional optimizations
-export WHISPER_DEVICE="cuda"  # Use GPU if available
-export MAX_CONCURRENT_TRANSCRIPTIONS="2"
-export GIT_AUTO_PUSH="true"
+# 事実確認を無効化して実行
+python process_content.py input/text/article.txt --no-fact-check
 ```
 
-## 🎯 Content Categories
-
-The Digital Garden Automation System automatically categorizes content:
-
-- **📝 Insights** (`insights/`): Business insights, technical learnings, strategic thinking
-- **📖 Diary** (`diary/`): Personal reflections, daily notes, experiences
-- **💼 Resume** (`resume/`): Skills, experience, achievements, career history
-- **👤 Profile** (`profile/`): Personal information, goals, values, interests
-
-## 📊 Workflow Examples
-
-### Daily Content Processing
+#### 5. Git push エラー
 
 ```bash
-# Morning routine: check what needs processing
-python automation/run_automation.py --status
+# リモートリポジトリの設定を確認
+git remote -v
 
-# Add yesterday's voice notes
-cp voice_notes/*.m4a input/audio/
-
-# Process and publish
-python automation/run_automation.py
-
-# Review results
-git log --oneline -5
+# プッシュせずコミットのみ
+python process_content.py input/text/article.txt --no-push
 ```
 
-### Weekly Resume Update
+#### 6. Astro build エラー
 
 ```bash
-# Update career information
+# Astro依存関係を再インストール
+cd digital-garden
+npm install
+npm run build
+```
+
+---
+
+## 📊 ワークフロー例
+
+### 日次コンテンツ処理
+
+```bash
+# 1. 新しいテキストファイルを作成
+echo "今日学んだこと..." > input/text/daily-learning.txt
+
+# 2. 自動処理実行
+python process_content.py input/text/daily-learning.txt
+
+# 3. 結果確認
+git log --oneline -1
+```
+
+### 週次履歴書更新
+
+```bash
+# 1. プロフィール情報を更新
 nano data/profile.yml
 
-# Generate updated resume
+# 2. 履歴書生成
 python src/main.py
 
-# Review output
+# 3. 出力確認
 open output/resume.html
 ```
 
-### Research and Insight Development
+---
 
-```bash
-# Add research audio/text
-cp research_material/* input/text/
-cp interview_recording.mp3 input/audio/
+## 📚 その他のリソース
 
-# Process with research enhancement
-python automation/run_automation.py --verbose
-
-# Check generated insights
-ls digital-garden/src/content/insights/
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **"No module named 'torch'"**
-   ```bash
-   pip install torch torchaudio transformers
-   ```
-
-2. **"API key not found"**
-   ```bash
-   echo $ANTHROPIC_API_KEY  # Check if set
-   export ANTHROPIC_API_KEY="your-key-here"
-   ```
-
-3. **"Git not found"**
-   - Install Git and ensure it's in your PATH
-   - Configure: `git config --global user.name "Your Name"`
-
-4. **"Permission denied"**
-   ```bash
-   chmod +x automation/run_automation.py
-   ```
-
-### Debug Mode
-
-```bash
-# Run with maximum verbosity
-python automation/run_automation.py --verbose --dry-run
-
-# Check logs
-tail -f logs/automation.log
-```
-
-### Performance Issues
-
-```bash
-# Use CPU instead of GPU if memory issues
-export WHISPER_DEVICE="cpu"
-
-# Reduce concurrent operations
-export MAX_CONCURRENT_TRANSCRIPTIONS="1"
-```
-
-## 📚 Additional Resources
-
-- **Digital Garden Automation**: See `automation/README.md`
-- **Resume System**: Check `templates/` for customization examples
-- **Configuration**: Review `automation/config/default.yaml` for all options
 - **API Documentation**:
   - [Anthropic Claude API](https://docs.anthropic.com/)
+  - [Google Gemini API (Imagen 4)](https://ai.google.dev/docs)
   - [Perplexity API](https://docs.perplexity.ai/)
+- **Astro Documentation**: [docs.astro.build](https://docs.astro.build/)
 
-## 🤝 Contributing
+---
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and test thoroughly
-4. Submit a pull request with a clear description
+## 🤝 コントリビュート
 
-## 📄 License
+1. リポジトリをフォーク
+2. フィーチャーブランチを作成: `git checkout -b feature-name`
+3. 変更を加えて十分にテスト
+4. プルリクエストを提出
 
-See the main repository for license information.
+---
+
+**Last Updated**: 2025-10-04
+**Version**: 2.0.0 - Digital Garden Automation Enhanced

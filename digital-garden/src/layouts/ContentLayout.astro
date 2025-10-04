@@ -1,0 +1,201 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    pubDate: Date;
+    updatedDate?: Date;
+    tags: string[];
+    category: string;
+    author?: string;
+    transcriptionSource?: string;
+    researchCitations?: Array<{
+      title: string;
+      url: string;
+      snippet: string;
+    }>;
+  };
+}
+
+const { frontmatter } = Astro.props;
+const formattedDate = frontmatter.pubDate.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+const updatedFormattedDate = frontmatter.updatedDate?.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+  <article class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <header class="mb-8 pb-8 border-b">
+      <div class="mb-4">
+        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+          {frontmatter.category}
+        </span>
+      </div>
+
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        {frontmatter.title}
+      </h1>
+
+      <p class="text-xl text-gray-600 mb-6">
+        {frontmatter.description}
+      </p>
+
+      <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+        <div>
+          <span class="font-medium">公開日:</span> {formattedDate}
+        </div>
+        {updatedFormattedDate && (
+          <div>
+            <span class="font-medium">更新日:</span> {updatedFormattedDate}
+          </div>
+        )}
+        <div>
+          <span class="font-medium">著者:</span> {frontmatter.author || '日下武紀'}
+        </div>
+      </div>
+
+      <!-- Tags -->
+      {frontmatter.tags.length > 0 && (
+        <div class="mt-4 flex flex-wrap gap-2">
+          {frontmatter.tags.map((tag) => (
+            <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <!-- Transcription Source -->
+      {frontmatter.transcriptionSource && (
+        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+          <p class="text-sm text-gray-700">
+            <span class="font-medium">📝 文字起こし元:</span> {frontmatter.transcriptionSource}
+          </p>
+        </div>
+      )}
+    </header>
+
+    <!-- Content -->
+    <div class="prose prose-lg max-w-none mb-12">
+      <slot />
+    </div>
+
+    <!-- Research Citations -->
+    {frontmatter.researchCitations && frontmatter.researchCitations.length > 0 && (
+      <aside class="mt-12 p-6 bg-gray-50 rounded-lg border">
+        <h2 class="text-2xl font-bold mb-4">🔍 参考文献・引用</h2>
+        <p class="text-sm text-gray-600 mb-4">
+          Perplexity AIによる事実確認で使用された情報源
+        </p>
+        <ul class="space-y-3">
+          {frontmatter.researchCitations.map((citation) => (
+            <li class="p-3 bg-white rounded border">
+              <a
+                href={citation.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-600 hover:underline font-medium block mb-1"
+              >
+                {citation.title}
+              </a>
+              <p class="text-sm text-gray-600">{citation.snippet}</p>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  /* プロースタイリング（マークダウンコンテンツ用） */
+  .prose {
+    color: #1f2937;
+  }
+
+  .prose h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .prose h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .prose p {
+    margin-bottom: 1.25rem;
+    line-height: 1.75;
+  }
+
+  .prose ul, .prose ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+
+  .prose code {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  .prose pre {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin-bottom: 1.25rem;
+  }
+
+  .prose pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .prose blockquote {
+    border-left: 4px solid #3b82f6;
+    padding-left: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+    font-style: italic;
+    color: #4b5563;
+  }
+
+  .prose a {
+    color: #3b82f6;
+    text-decoration: underline;
+  }
+
+  .prose a:hover {
+    color: #2563eb;
+  }
+
+  .prose img {
+    border-radius: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+</style>

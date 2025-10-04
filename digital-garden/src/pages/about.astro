@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About"
+  description="デジタルガーデンと自動化システムについて"
+>
+  <article class="max-w-4xl mx-auto prose prose-lg">
+    <h1 class="text-4xl md:text-5xl font-bold mb-6">About This Garden</h1>
+
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-4">デジタルガーデンとは？</h2>
+      <p class="text-gray-700 leading-relaxed">
+        デジタルガーデンは、従来のブログとは異なるアプローチで知識を管理する新しい概念です。
+        ブログが時系列で記事を並べるのに対し、デジタルガーデンは知識を「育てる」ことに重点を置いています。
+      </p>
+
+      <div class="bg-blue-50 p-6 rounded-lg my-6">
+        <h3 class="text-xl font-bold mb-3">デジタルガーデンの特徴</h3>
+        <ul class="space-y-2">
+          <li><strong>📝 育てる</strong>: 記事は一度書いて終わりではなく、継続的に更新・改善される</li>
+          <li><strong>🔗 つながる</strong>: 記事同士がテーマやタグで有機的にリンクされる</li>
+          <li><strong>🌱 成長する</strong>: 知識が積み重なり、より深い洞察へと発展する</li>
+          <li><strong>🚀 共有する</strong>: 学びのプロセスを公開し、コミュニティと共有する</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-4">AI駆動の自動化システム</h2>
+      <p class="text-gray-700 leading-relaxed mb-6">
+        このデジタルガーデンは、最先端のAI技術を活用した自動化システムによって運営されています。
+        音声メモから自動的にWebサイトを更新する、完全自動化パイプラインを実現しています。
+      </p>
+
+      <div class="space-y-6">
+        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
+          <h3 class="text-xl font-bold mb-2">🎤 1. Whisper AIによる文字起こし</h3>
+          <p class="text-gray-700">
+            音声メモや動画コンテンツを自動的にテキスト化します。
+            日本語に特化した<code class="text-sm bg-gray-100 px-2 py-1 rounded">kotoba-whisper-v2.0</code>
+            モデルを使用し、高精度な文字起こしを実現しています。
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
+          <h3 class="text-xl font-bold mb-2">🏷️ 2. Claude AIによる自動分類</h3>
+          <p class="text-gray-700 mb-3">
+            文字起こしされたコンテンツを、Claude 3.5 Sonnetが自動的に分類：
+          </p>
+          <ul class="text-gray-700 space-y-1">
+            <li>• カテゴリ判定（Insights / Ideas / Weekly Reviews）</li>
+            <li>• 適切なタグの自動付与</li>
+            <li>• キャッチーなタイトル・要約の生成</li>
+            <li>• マークダウン構造化</li>
+          </ul>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-purple-500">
+          <h3 class="text-xl font-bold mb-2">🔍 3. Perplexity AIによる事実確認</h3>
+          <p class="text-gray-700">
+            重要な主張や技術的な内容について、Perplexity AIが自動的に裏付け調査を実施。
+            引用ソースを付記することで、情報の信頼性を担保します。
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow border-l-4 border-orange-500">
+          <h3 class="text-xl font-bold mb-2">🚀 4. GitHub Actionsによる自動デプロイ</h3>
+          <p class="text-gray-700">
+            コンテンツが作成されると、GitHub Actionsが自動的にビルド・デプロイを実行。
+            数分後にはGitHub Pagesで公開されます。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-4">技術スタック</h2>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-xl font-bold mb-3">フロントエンド</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li><strong>Astro 4.x</strong> - 超高速な静的サイトジェネレーター</li>
+            <li><strong>Tailwind CSS</strong> - ユーティリティファーストCSS</li>
+            <li><strong>TypeScript</strong> - 型安全な開発</li>
+            <li><strong>MDX</strong> - マークダウン + JSX</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg">
+          <h3 class="text-xl font-bold mb-3">バックエンド（自動化）</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li><strong>Python 3.10+</strong> - 自動化スクリプト</li>
+            <li><strong>Whisper</strong> - 音声認識</li>
+            <li><strong>Claude API</strong> - コンテンツ分類</li>
+            <li><strong>Perplexity API</strong> - 事実確認</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-4">Author</h2>
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-lg">
+        <p class="text-3xl font-bold text-blue-600 mb-2">日下 武紀</p>
+        <p class="text-xl text-gray-700 mb-4">IoT・クラウド・生成AIエンジニア</p>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          製造業向けIoTシステムの設計・開発、クラウドインフラの構築、
+          生成AIを活用したビジネスソリューションの開発に従事。
+          技術の学びを継続的に記録し、コミュニティと共有することを大切にしています。
+        </p>
+        <div class="flex gap-4">
+          <a
+            href="https://github.com/Takenori-Kusaka"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition"
+          >
+            GitHub
+          </a>
+          <a
+            href="/personal/resume/"
+            class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          >
+            Resume
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-3xl font-bold mb-4">パフォーマンス目標</h2>
+      <p class="text-gray-700 mb-4">
+        Astroの「ゼロJSデフォルト」アーキテクチャにより、超高速なページロードを実現：
+      </p>
+      <div class="bg-green-50 p-6 rounded-lg">
+        <ul class="space-y-2 text-gray-700">
+          <li>🎯 <strong>Lighthouse Score</strong>: 95+ 目標</li>
+          <li>⚡ <strong>First Contentful Paint</strong>: &lt; 1.0s</li>
+          <li>🚀 <strong>Largest Contentful Paint</strong>: &lt; 2.5s</li>
+          <li>📊 <strong>Cumulative Layout Shift</strong>: &lt; 0.1</li>
+        </ul>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .prose code {
+    background-color: #f3f4f6;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+</style>

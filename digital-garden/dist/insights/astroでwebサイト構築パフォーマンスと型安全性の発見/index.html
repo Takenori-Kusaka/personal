@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="AstroのゼロJSデフォルト設計とContent Collections機能を活用し、高速で型安全なデジタルガーデンを構築した経験と学び"><meta name="generator" content="Astro v5.14.1"><meta name="author" content="日下武紀 (Takenori Kusaka)"><!-- Favicon --><link rel="icon" type="image/png" sizes="512x512" href="/personalfavicon.png"><link rel="apple-touch-icon" href="/personalfavicon.png"><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://takenori-kusaka.github.io/personal"><meta property="og:title" content="AstroでWebサイト構築：パフォーマンスと型安全性の発見 | Digital Garden"><meta property="og:description" content="AstroのゼロJSデフォルト設計とContent Collections機能を活用し、高速で型安全なデジタルガーデンを構築した経験と学び"><meta property="og:image" content="https://takenori-kusaka.github.io/personalog-image.png"><meta property="og:site_name" content="Digital Garden"><meta property="og:locale" content="ja_JP"><!-- Twitter --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://takenori-kusaka.github.io/personal"><meta name="twitter:title" content="AstroでWebサイト構築：パフォーマンスと型安全性の発見 | Digital Garden"><meta name="twitter:description" content="AstroのゼロJSデフォルト設計とContent Collections機能を活用し、高速で型安全なデジタルガーデンを構築した経験と学び"><meta name="twitter:image" content="https://takenori-kusaka.github.io/personalog-image.png"><!-- Fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet"><!-- Mermaid for diagram rendering --><script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      themeVariables: {
+        primaryColor: '#2563eb',
+        primaryTextColor: '#1e3a8a',
+        primaryBorderColor: '#3b82f6',
+        lineColor: '#60a5fa',
+        secondaryColor: '#93c5fd',
+        tertiaryColor: '#dbeafe',
+        fontFamily: 'Noto Sans JP, sans-serif'
+      }
+    });
+  </script><title>AstroでWebサイト構築：パフォーマンスと型安全性の発見 | Digital Garden</title><link rel="stylesheet" href="/personal/_astro/_slug_.DQGBvIBb.css">
+<style>.prose[data-astro-cid-scuu7fyy]{color:#1f2937}.prose[data-astro-cid-scuu7fyy] h2[data-astro-cid-scuu7fyy]{margin-top:2rem;margin-bottom:1rem;font-size:1.875rem;font-weight:700;line-height:1.3}.prose[data-astro-cid-scuu7fyy] h3[data-astro-cid-scuu7fyy]{margin-top:1.5rem;margin-bottom:.75rem;font-size:1.5rem;font-weight:600;line-height:1.4}.prose[data-astro-cid-scuu7fyy] p[data-astro-cid-scuu7fyy]{margin-bottom:1.25rem;line-height:1.75}.prose[data-astro-cid-scuu7fyy] ul[data-astro-cid-scuu7fyy],.prose[data-astro-cid-scuu7fyy] ol[data-astro-cid-scuu7fyy]{margin-bottom:1.25rem;padding-left:1.5rem}.prose[data-astro-cid-scuu7fyy] li[data-astro-cid-scuu7fyy]{margin-bottom:.5rem}.prose[data-astro-cid-scuu7fyy] code[data-astro-cid-scuu7fyy]{background-color:#f3f4f6;padding:.125rem .375rem;border-radius:.25rem;font-size:.875em}.prose[data-astro-cid-scuu7fyy] pre[data-astro-cid-scuu7fyy]{background-color:#1f2937;color:#f9fafb;padding:1rem;border-radius:.5rem;overflow-x:auto;margin-bottom:1.25rem}.prose[data-astro-cid-scuu7fyy] pre[data-astro-cid-scuu7fyy] code[data-astro-cid-scuu7fyy]{background-color:transparent;padding:0;color:inherit}.prose[data-astro-cid-scuu7fyy] blockquote[data-astro-cid-scuu7fyy]{border-left:4px solid #3b82f6;padding-left:1rem;margin-left:0;margin-right:0;font-style:italic;color:#4b5563}.prose[data-astro-cid-scuu7fyy] a[data-astro-cid-scuu7fyy]{color:#3b82f6;text-decoration:underline}.prose[data-astro-cid-scuu7fyy] a[data-astro-cid-scuu7fyy]:hover{color:#2563eb}.prose[data-astro-cid-scuu7fyy] img[data-astro-cid-scuu7fyy]{border-radius:.5rem;margin-top:1.5rem;margin-bottom:1.5rem}
+</style></head> <body class="min-h-screen bg-gray-50 text-gray-900"> <!-- Header --> <header class="bg-white shadow-sm sticky top-0 z-50"> <div class="container mx-auto px-4 py-4"> <div class="flex items-center justify-between"> <h1 class="text-2xl font-bold"> <a href="/personal" class="text-blue-600 hover:text-blue-700 transition">
+Digital Garden
+</a> </h1> <nav class="flex gap-6"> <a href="/personalinsights/" class="text-gray-700 hover:text-blue-600 transition">
+Insights
+</a> <a href="/personalideas/" class="text-gray-700 hover:text-blue-600 transition">
+Ideas
+</a> <a href="/personalweekly-reviews/" class="text-gray-700 hover:text-blue-600 transition">
+Weekly Reviews
+</a> <a href="/personalabout/" class="text-gray-700 hover:text-blue-600 transition">
+About
+</a> </nav> </div> </div> </header> <!-- Main Content --> <main class="container mx-auto px-4 py-8">  <article class="max-w-4xl mx-auto" data-astro-cid-scuu7fyy> <!-- Header --> <header class="mb-8 pb-8 border-b" data-astro-cid-scuu7fyy> <div class="mb-4" data-astro-cid-scuu7fyy> <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium" data-astro-cid-scuu7fyy> insights </span> </div> <h1 class="text-4xl md:text-5xl font-bold mb-4" data-astro-cid-scuu7fyy> AstroでWebサイト構築：パフォーマンスと型安全性の発見 </h1> <p class="text-xl text-gray-600 mb-6" data-astro-cid-scuu7fyy> AstroのゼロJSデフォルト設計とContent Collections機能を活用し、高速で型安全なデジタルガーデンを構築した経験と学び </p> <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600" data-astro-cid-scuu7fyy> <div data-astro-cid-scuu7fyy> <span class="font-medium" data-astro-cid-scuu7fyy>公開日:</span> 2025年10月4日 </div>  <div data-astro-cid-scuu7fyy> <span class="font-medium" data-astro-cid-scuu7fyy>著者:</span> 日下武紀 </div> </div> <!-- Tags --> <div class="mt-4 flex flex-wrap gap-2" data-astro-cid-scuu7fyy> <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm" data-astro-cid-scuu7fyy>
+#Astro </span><span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm" data-astro-cid-scuu7fyy>
+#TypeScript </span><span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm" data-astro-cid-scuu7fyy>
+#Performance </span><span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm" data-astro-cid-scuu7fyy>
+#Content Collections </span><span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm" data-astro-cid-scuu7fyy>
+#Tailwind CSS </span> </div> <!-- Transcription Source -->  </header> <!-- Content --> <div class="prose prose-lg max-w-none mb-12" data-astro-cid-scuu7fyy>  <h2 id="パフォーマンスの発見">パフォーマンスの発見</h2>
+<ul>
+<li>AstroのゼロJSデフォルトアーキテクチャにより、Lighthouseスコア98点を達成</li>
+<li>必要な部分のみにJavaScriptを適用可能</li>
+<li>Tailwind CSS v4のViteプラグインで、ビルド時間が50%短縮</li>
+</ul>
+<h2 id="content-collectionsの威力">Content Collectionsの威力</h2>
+<h3 id="型安全なコンテンツ管理">型安全なコンテンツ管理</h3>
+<p>TypeScriptによるフロントマターの厳密な管理が可能：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="typescript"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> contentSchema</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> z.</span><span style="color:#B392F0">object</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  title: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  description: z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  pubDate: z.coerce.</span><span style="color:#B392F0">date</span><span style="color:#E1E4E8">(),</span></span>
+<span class="line"><span style="color:#E1E4E8">  tags: z.</span><span style="color:#B392F0">array</span><span style="color:#E1E4E8">(z.</span><span style="color:#B392F0">string</span><span style="color:#E1E4E8">()),</span></span>
+<span class="line"><span style="color:#E1E4E8">  category: z.</span><span style="color:#B392F0">enum</span><span style="color:#E1E4E8">([</span><span style="color:#9ECBFF">'insights'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'ideas'</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">'weekly-reviews'</span><span style="color:#E1E4E8">]),</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<h3 id="主なメリット">主なメリット</h3>
+<ul>
+<li>ビルド時のエラー検出</li>
+<li>タイポや型の不一致を事前に防止</li>
+<li>コンテンツ構造の保証</li>
+</ul>
+<h2 id="実装上の学び">実装上の学び</h2>
+<ul>
+<li>動的ルーティングは<code>getStaticPaths()</code>を使用</li>
+<li>Content Collectionsとの組み合わせでシンプルな実装が可能</li>
+</ul>
+<h2 id="今後の展望">今後の展望</h2>
+<ul>
+<li>Pagefindによる検索機能の実装</li>
+<li>PWA対応の検討</li>
+</ul>
+<h2 id="まとめ">まとめ</h2>
+<p>Astroは静的サイトジェネレーターとして優れており、特にコンテンツ中心のサイトに最適。</p>
+<h2 id="参考リンク">参考リンク</h2>
+<ul>
+<li><a href="https://docs.astro.build/">Astro公式ドキュメント</a></li>
+<li><a href="https://docs.astro.build/en/guides/content-collections/">Content Collections Guide</a></li>
+</ul>  </div> <!-- Research Citations -->  </article>  </main> <!-- Footer --> <footer class="bg-white border-t mt-16"> <div class="container mx-auto px-4 py-8"> <div class="text-center text-gray-600"> <p>&copy; 2025 Takenori Kusaka. Powered by Digital Garden Automation System.</p> <div class="flex justify-center gap-4 mt-4 text-sm flex-wrap"> <a href="https://github.com/Takenori-Kusaka" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+GitHub
+</a> <span class="text-gray-400">|</span> <a href="/personalresume/" class="text-blue-600 hover:underline">
+Resume
+</a> <span class="text-gray-400">|</span> <a href="https://takenori-kusaka.github.io/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+Homepage
+</a> <span class="text-gray-400">|</span> <a href="https://www.youtube.com/channel/UCD1zo-WnyFdE5w0pqvKblkA" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+YouTube
+</a> <span class="text-gray-400">|</span> <a href="https://listen.style/p/recalog" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+Podcast (Listen)
+</a> </div> </div> </div> </footer> </body></html> 

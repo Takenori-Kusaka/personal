@@ -124,8 +124,12 @@ tmp/
 .env.local
 .env.production
 .env.staging
+.env.test
 secrets.yml
 config.local.yml
+
+# Keep template file
+!.env.template
 
 # Personal data (except schema)
 # data/profile.yml - This should be tracked as it's the main data file

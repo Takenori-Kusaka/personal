@@ -55,7 +55,7 @@ mypy>=1.7.0                     # Type checking
 
 # Security
 # cryptography>=41.0.0          # Encryption utilities
-# python-dotenv>=1.0.0          # Environment variable management
+python-dotenv>=1.0.0            # Environment variable management (ENABLED for .env support)
 
 # Performance Optimization
 # cachetools>=5.3.0             # Caching utilities

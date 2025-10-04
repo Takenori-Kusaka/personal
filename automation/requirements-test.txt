@@ -1,0 +1,32 @@
+# Testing Dependencies for Digital Garden Automation System
+
+# Core Testing
+pytest>=7.4.0                    # Testing framework
+pytest-asyncio>=0.21.0           # Async testing support
+pytest-cov>=4.1.0                # Coverage reporting
+pytest-mock>=3.12.0              # Mocking utilities
+pytest-timeout>=2.2.0            # Test timeout control
+
+# E2E and Browser Testing
+playwright>=1.40.0               # Browser automation
+pytest-playwright>=0.4.4         # Pytest-Playwright integration
+
+# API Testing
+responses>=0.24.0                # HTTP mocking for API tests
+httpx>=0.25.0                    # Async HTTP client (already in main requirements)
+
+# Test Data and Fixtures
+faker>=20.0.0                    # Test data generation
+pytest-fixtures>=0.1.0           # Additional fixtures
+
+# Coverage and Reporting
+coverage>=7.3.0                  # Coverage measurement
+pytest-html>=4.1.0               # HTML test reports
+
+# Performance Testing
+pytest-benchmark>=4.0.0          # Performance benchmarking
+
+# Code Quality
+flake8>=6.0.0                    # Linting
+mypy>=1.7.0                      # Type checking (already in main requirements)
+black>=23.0.0                    # Code formatting (already in main requirements)

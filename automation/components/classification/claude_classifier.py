@@ -462,12 +462,20 @@ JSON形式で回答してください：
                 self.logger.error("Content generation failed", error=e, category=category)
                 return None
 
+    def _format_research_info(self, content_data: Dict[str, Any]) -> str:
+        """Format research information for prompt"""
+        if 'research' not in content_data:
+            return ""
+        research_json = json.dumps(content_data['research'], indent=2, ensure_ascii=False)[:1000]
+        newline = chr(10)
+        return f"## 研究情報{newline}{research_json}"
+
     def _build_generation_system_prompt(self, category: str) -> str:
         """Build system prompt for content generation"""
         template = self.templates[category]
 
         structure_desc = "\n".join([
-            f"- {key}: {desc.split('\\n')[0]}"
+            f"- {key}: {desc.split(chr(10))[0]}"
             for key, desc in template['content_structure'].items()
         ])
 
@@ -532,7 +540,7 @@ JSON形式で回答してください：
 ## 元のコンテンツ
 {content_data.get('text', '')[:3000]}{'...' if len(content_data.get('text', '')) > 3000 else ''}
 
-{f"## 研究情報\\n{json.dumps(content_data['research'], indent=2, ensure_ascii=False)[:1000]}" if 'research' in content_data else ""}
+{self._format_research_info(content_data) if 'research' in content_data else ""}
 
 上記の情報を基に、指定された構造に従ってコンテンツを生成し、JSON形式で回答してください。"""
 

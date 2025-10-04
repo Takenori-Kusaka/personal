@@ -1,0 +1,230 @@
+# Categories for organizing exhibition insights
+# Format: name, description, color (Tailwind classes), icon, parentCategory, keywords, weight
+
+technology:
+  name: "Technology"
+  description: "新しい技術、デジタルツール、イノベーション"
+  color: "blue"
+  icon: "⚡"
+  keywords:
+    - "AI"
+    - "IoT"
+    - "クラウド"
+    - "機械学習"
+    - "自動化"
+    - "デジタル変革"
+  weight: 10
+
+business_model:
+  name: "Business Model"
+  description: "ビジネスモデル、収益構造、市場戦略"
+  color: "green"
+  icon: "💰"
+  keywords:
+    - "収益"
+    - "マネタイゼーション"
+    - "市場"
+    - "競合"
+    - "戦略"
+    - "顧客価値"
+  weight: 9
+
+user_experience:
+  name: "User Experience"
+  description: "ユーザビリティ、UI/UX、顧客体験"
+  color: "purple"
+  icon: "👤"
+  keywords:
+    - "UX"
+    - "UI"
+    - "ユーザビリティ"
+    - "顧客体験"
+    - "インタラクション"
+    - "デザイン"
+  weight: 8
+
+sustainability:
+  name: "Sustainability"
+  description: "持続可能性、環境配慮、社会貢献"
+  color: "emerald"
+  icon: "🌱"
+  keywords:
+    - "SDGs"
+    - "環境"
+    - "持続可能"
+    - "リサイクル"
+    - "エネルギー効率"
+    - "社会貢献"
+  weight: 7
+
+manufacturing:
+  name: "Manufacturing"
+  description: "製造業、生産技術、品質管理"
+  color: "orange"
+  icon: "🏭"
+  keywords:
+    - "製造"
+    - "生産"
+    - "品質"
+    - "効率化"
+    - "自動化"
+    - "スマートファクトリー"
+  weight: 8
+
+healthcare:
+  name: "Healthcare"
+  description: "医療、ヘルスケア、ウェルネス"
+  color: "red"
+  icon: "🏥"
+  keywords:
+    - "医療"
+    - "健康"
+    - "診断"
+    - "治療"
+    - "予防"
+    - "ウェルネス"
+  weight: 6
+
+mobility:
+  name: "Mobility"
+  description: "交通、モビリティ、自動車、物流"
+  color: "cyan"
+  icon: "🚗"
+  keywords:
+    - "自動車"
+    - "交通"
+    - "物流"
+    - "自動運転"
+    - "電動化"
+    - "シェアリング"
+  weight: 6
+
+energy:
+  name: "Energy"
+  description: "エネルギー、電力、再生可能エネルギー"
+  color: "yellow"
+  icon: "⚡"
+  keywords:
+    - "電力"
+    - "エネルギー"
+    - "再生可能"
+    - "太陽光"
+    - "風力"
+    - "バッテリー"
+  weight: 7
+
+communication:
+  name: "Communication"
+  description: "通信、5G/6G、ネットワーク"
+  color: "indigo"
+  icon: "📡"
+  keywords:
+    - "5G"
+    - "6G"
+    - "通信"
+    - "ネットワーク"
+    - "接続性"
+    - "リモート"
+  weight: 5
+
+education:
+  name: "Education"
+  description: "教育、学習、トレーニング"
+  color: "teal"
+  icon: "📚"
+  keywords:
+    - "教育"
+    - "学習"
+    - "トレーニング"
+    - "eラーニング"
+    - "スキル"
+    - "知識"
+  weight: 4
+
+entertainment:
+  name: "Entertainment"
+  description: "エンターテイメント、ゲーム、メディア"
+  color: "pink"
+  icon: "🎮"
+  keywords:
+    - "ゲーム"
+    - "エンターテイメント"
+    - "メディア"
+    - "AR/VR"
+    - "コンテンツ"
+    - "体験"
+  weight: 3
+
+retail:
+  name: "Retail"
+  description: "小売、EC、消費者向けサービス"
+  color: "rose"
+  icon: "🛍️"
+  keywords:
+    - "小売"
+    - "EC"
+    - "オンライン"
+    - "消費者"
+    - "ショッピング"
+    - "サービス"
+  weight: 5
+
+finance:
+  name: "Finance"
+  description: "金融、フィンテック、決済"
+  color: "amber"
+  icon: "💳"
+  keywords:
+    - "金融"
+    - "フィンテック"
+    - "決済"
+    - "投資"
+    - "保険"
+    - "仮想通貨"
+  weight: 4
+
+# Sub-categories (examples)
+ai_machine_learning:
+  name: "AI & Machine Learning"
+  description: "人工知能、機械学習、深層学習"
+  color: "blue"
+  icon: "🤖"
+  parentCategory: "technology"
+  keywords:
+    - "人工知能"
+    - "機械学習"
+    - "深層学習"
+    - "ニューラルネットワーク"
+    - "自然言語処理"
+    - "画像認識"
+  weight: 10
+
+iot_sensors:
+  name: "IoT & Sensors"
+  description: "IoTデバイス、センサー、エッジコンピューティング"
+  color: "blue"
+  icon: "📱"
+  parentCategory: "technology"
+  keywords:
+    - "IoT"
+    - "センサー"
+    - "エッジ"
+    - "デバイス"
+    - "データ収集"
+    - "監視"
+  weight: 9
+
+digital_transformation:
+  name: "Digital Transformation"
+  description: "DX、デジタル化、プロセス改善"
+  color: "blue"
+  icon: "🔄"
+  parentCategory: "technology"
+  keywords:
+    - "DX"
+    - "デジタル化"
+    - "変革"
+    - "プロセス"
+    - "効率化"
+    - "自動化"
+  weight: 8

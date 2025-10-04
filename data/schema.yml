@@ -1,0 +1,162 @@
+# Resume Data Schema Definition
+# This file defines the expected structure for profile.yml
+
+schema:
+  profile:
+    meta:
+      version:
+        type: string
+        required: true
+        description: "Schema version"
+      last_updated:
+        type: string
+        format: date
+        required: true
+        description: "Last update date in YYYY-MM-DD format"
+      generated_by:
+        type: string
+        required: true
+        description: "System identifier"
+
+    personal:
+      name:
+        type: string
+        required: true
+        description: "Full name"
+      gender:
+        type: string
+        enum: ["男", "女", "その他"]
+        required: false
+      birth_date:
+        type: string
+        required: false
+        description: "Birth date"
+      age:
+        type: integer
+        required: false
+        minimum: 0
+        maximum: 150
+      location:
+        type: string
+        required: false
+        description: "Location/Prefecture"
+      hobbies:
+        type: array
+        items:
+          type: string
+        required: false
+
+    education:
+      type: array
+      required: true
+      items:
+        type: object
+        required: ["school_name", "graduation_date"]
+        properties:
+          school_name:
+            type: string
+            required: true
+          department:
+            type: string
+            required: false
+          graduation_date:
+            type: string
+            format: date
+            required: true
+          notes:
+            type: string
+            required: false
+
+    career:
+      companies:
+        type: array
+        required: true
+        items:
+          type: object
+          required: ["company_id", "name", "period", "position"]
+          properties:
+            company_id:
+              type: string
+              required: true
+              description: "Unique identifier for the company"
+            name:
+              type: string
+              required: true
+            period:
+              type: object
+              required: ["start_date", "end_date"]
+              properties:
+                start_date:
+                  type: string
+                  format: date
+                  required: true
+                end_date:
+                  type: string
+                  required: true
+                  description: "End date or '在職中'"
+            position:
+              type: string
+              required: true
+            business_content:
+              type: string
+              required: false
+            reason_for_leaving:
+              type: string
+              required: false
+            skills:
+              type: object
+              required: false
+              properties:
+                mechanical:
+                  type: array
+                  items:
+                    type: string
+                electrical:
+                  type: array
+                  items:
+                    type: string
+                software:
+                  type: array
+                  items:
+                    type: string
+            projects:
+              type: array
+              required: false
+              items:
+                type: object
+                required: ["project_id", "title", "period", "role"]
+                properties:
+                  project_id:
+                    type: string
+                    required: true
+                  title:
+                    type: string
+                    required: true
+                  period:
+                    type: object
+                    required: ["start_date", "end_date"]
+                  role:
+                    type: string
+                    required: true
+                  responsibilities:
+                    type: array
+                    items:
+                      type: string
+                  team_size:
+                    type: string
+                    required: false
+                  achievements:
+                    type: array
+                    items:
+                      type: string
+                  description:
+                    type: string
+                    required: false
+                    description: "Long-form project description"
+
+validation_rules:
+  # Custom validation rules
+  date_format: "YYYY年MM月"
+  required_sections: ["personal", "education", "career"]
+  max_project_description_length: 2000
+  min_achievements_count: 1

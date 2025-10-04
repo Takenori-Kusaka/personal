@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resume-management-system"
+version = "2.0.0"
+description = "Modern resume management system with YAML->Markdown->PDF pipeline"
+authors = [
+    {name = "Takenori Kusaka", email = "contact@example.com"}
+]
+requires-python = ">=3.9"
+dependencies = [
+    "PyYAML>=6.0.1",
+    "markdown>=3.5.0",
+    "Jinja2>=3.1.2",
+    "weasyprint>=60.0",
+    "textstat>=0.7.0",
+    "rich>=13.6.0",
+    "beautifulsoup4>=4.12.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=3.5.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.6.0",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+]
+
+[project.scripts]
+resume-build = "src.main:main"
+resume-validate = "src.core.validator:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --cov=src"
+testpaths = [
+    "tests",
+]

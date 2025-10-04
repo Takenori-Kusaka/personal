@@ -1,0 +1,79 @@
+# Personal Digital Garden & Resume Management System - Complete Dependencies
+# Includes dependencies for both the Resume Management System and Digital Garden Automation System
+
+# ===================================
+# Resume Management System Dependencies
+# ===================================
+PyYAML>=6.0.1                    # YAML data processing
+markdown>=3.5.0                  # Markdown to HTML conversion
+Jinja2>=3.1.2                    # Template engine
+rich>=13.6.0                     # Beautiful console output
+
+# ===================================
+# Digital Garden Automation Dependencies
+# ===================================
+# Core AI/ML Libraries
+torch>=2.0.0                     # PyTorch for Whisper model support
+torchaudio>=2.0.0                # Audio processing for Whisper
+transformers>=4.35.0             # Hugging Face transformers for Whisper
+accelerate>=0.24.0               # Accelerated inference for transformers
+
+# API Clients
+anthropic>=0.7.0                 # Claude API client
+httpx>=0.25.0                    # HTTP client for Perplexity API
+
+# File Processing
+python-dateutil>=2.8.2          # Date/time utilities
+
+# Audio/Video Processing (optional)
+# librosa>=0.10.1                # Audio analysis (optional enhancement)
+# ffmpeg-python>=0.2.0           # Video processing support
+
+# ===================================
+# Development and Quality Assurance
+# ===================================
+pre-commit>=3.5.0                # Git hooks management
+black>=23.0.0                    # Code formatting
+flake8>=6.0.0                    # Linting
+mypy>=1.7.0                      # Type checking
+isort>=5.12.0                    # Import sorting
+
+# ===================================
+# Testing
+# ===================================
+pytest>=7.4.0                    # Testing framework
+pytest-asyncio>=0.21.0           # Async testing support
+pytest-cov>=4.1.0                # Coverage reporting
+
+# ===================================
+# Optional Dependencies for Enhanced Functionality
+# ===================================
+# Uncomment if you want these features:
+
+# PDF generation - requires system dependencies
+# weasyprint>=60.0               # HTML to PDF (Linux/macOS)
+# reportlab>=4.0.0               # Direct PDF generation
+
+# Natural Language Processing
+# spacy>=3.7.0                   # Advanced NLP for better concept extraction
+# ja-core-news-sm>=3.7.0         # Japanese language model for spaCy
+
+# Audio Processing Enhancements
+# pydub>=0.25.1                  # Audio format conversion
+
+# Computer Vision (for future image processing)
+# Pillow>=10.0.0                 # Image processing
+# opencv-python>=4.8.0           # Computer vision
+
+# Web Scraping (for research enhancement)
+# beautifulsoup4>=4.12.0         # HTML parsing
+# requests>=2.31.0               # HTTP requests
+
+# Security and Environment
+# python-dotenv>=1.0.0           # Environment variable management
+# cryptography>=41.0.0           # Encryption utilities
+
+# Performance Optimization
+# cachetools>=5.3.0              # Caching utilities
+# memory-profiler>=0.61.0        # Memory usage profiling
+# psutil>=5.9.0                  # System monitoring

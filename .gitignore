@@ -1,0 +1,216 @@
+# Resume Management System v2.0 - Git Ignore Configuration
+
+# ===================================
+# Python Environment
+# ===================================
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# ===================================
+# Generated Output Files
+# ===================================
+# Resume output files (will be regenerated)
+output/
+*.html
+*.pdf
+*.docx
+
+# Log files
+*.log
+logs/
+
+# ===================================
+# Development Environment
+# ===================================
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# ===================================
+# System Files
+# ===================================
+# Windows
+desktop.ini
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+
+# ===================================
+# Backup and Temporary Files
+# ===================================
+# Backup files
+*.bak
+*.backup
+*.tmp
+*_backup.*
+*_legacy.*
+
+# Temporary files
+temp/
+tmp/
+.temp/
+
+# ===================================
+# Sensitive Information
+# ===================================
+# API keys and secrets
+.env
+.env.local
+.env.production
+.env.staging
+secrets.yml
+config.local.yml
+
+# Personal data (except schema)
+# data/profile.yml - This should be tracked as it's the main data file
+
+# ===================================
+# Documentation Generation
+# ===================================
+# Generated docs (will be created by CI/CD)
+docs/_build/
+docs/build/
+site/
+
+# ===================================
+# Dependencies and Locks
+# ===================================
+# Pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Poetry
+poetry.lock
+
+# Pipenv
+Pipfile.lock
+
+# ===================================
+# Cloud and CI/CD
+# ===================================
+# GitHub Pages (will be generated automatically)
+_site/
+
+# ===================================
+# Resume Management System Specific
+# ===================================
+# Legacy files from old system
+*.adoc
+career*.html
+asc.py
+create_asciidoc.py
+
+# Development reference files
+*.png
+*.jpg
+*.jpeg
+reference/
+samples/
+
+# ===================================
+# Digital Garden Automation System
+# ===================================
+# Input files (users place files here, but they get processed and moved)
+input/audio/*
+!input/audio/.gitkeep
+input/video/*
+!input/video/.gitkeep
+input/text/*
+!input/text/.gitkeep
+input/processed/*/
+!input/processed/.gitkeep
+
+# Automation logs and cache
+automation/logs/
+automation/.cache/
+automation/__pycache__/
+
+# Model cache (Whisper models can be large)
+.cache/huggingface/
+.cache/transformers/
+
+# Custom configuration files (may contain API keys)
+automation/config/custom.yaml
+automation/config/production.yaml
+automation/config/local.yaml
+
+# Research cache and temporary data
+automation/.research_cache/
+automation/temp/
+
+# ===================================
+# Performance and Debug
+# ===================================
+# Profiling output
+.prof
+*.prof
+
+# Debug output
+debug.log
+*.debug

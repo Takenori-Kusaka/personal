@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "SlashCommand(/sc:load)",
+      "SlashCommand(/sc:brainstorm)",
+      "SlashCommand(/sc:implement)",
+      "Bash(python:*)",
+      "Read(//c/**)",
+      "Bash(venv_newScripts:*)",
+      "Bash(pip install:*)",
+      "Bash(pip uninstall:*)",
+      "SlashCommand(/sc:cleanup)",
+      "SlashCommand(/sc:workflow C:\\Users\\kokor\\OneDrive\\Document\\GitHub\\personal\\claudedocs\\homepage_architecture_design.mdの要件定義結果に基づき実装計画などスケジューリングを行ってください。追加要件：インプットファイル(.gitkeepで管理、ファイルはgitignore)の音声/動画からのテキスト化、Claudeコマンドでのコンテンツ分類、自動Git処理とGitHub Pages更新、Perplexity APIによる裏付け調査を含む統合的なワークフロー実装)",
+      "SlashCommand(/sc:design:*)",
+      "SlashCommand(/sc:git)",
+      "Bash(git config:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

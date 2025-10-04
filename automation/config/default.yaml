@@ -1,0 +1,131 @@
+# Digital Garden Automation Configuration
+# Default configuration for the automated content processing pipeline
+
+# File paths configuration
+paths:
+  input_audio: "input/audio"
+  input_video: "input/video"
+  input_text: "input/text"
+  input_processed: "input/processed"
+  digital_garden: "digital-garden"
+  templates: "automation/templates"
+  logs: "logs"
+
+# Whisper transcription settings
+transcription:
+  model_name: "kotoba-tech/kotoba-whisper-v2.0"
+  device: "auto"  # "auto", "cpu", "cuda"
+  compute_type: "float16"
+  supported_formats: ["mp3", "wav", "flac", "m4a", "ogg"]
+  min_confidence: 0.7
+  language: "ja"
+  task: "transcribe"  # "transcribe" or "translate"
+  chunk_duration: 30
+  max_file_size_mb: 500
+  output_format: "segments"
+
+# Claude API configuration
+classification:
+  # api_key: "${ANTHROPIC_API_KEY}"  # Set via environment variable
+  model: "claude-3-5-sonnet-20241022"
+  max_tokens: 4000
+  temperature: 0.7
+  timeout: 60
+  max_retries: 3
+  retry_delay: 1.0
+
+# Perplexity API configuration
+research:
+  # api_key: "${PERPLEXITY_API_KEY}"  # Set via environment variable
+  model: "llama-3.1-sonar-small-128k-online"
+  max_tokens: 2000
+  temperature: 0.2
+  timeout: 45
+  max_retries: 3
+  retry_delay: 1.0
+  search_recency_filter: "month"
+
+# Git automation settings
+git:
+  repository_path: "."
+  main_branch: "main"
+  feature_branch_prefix: "automation/"
+  commit_message_template: |
+    🤖 Automated content: {category} - {title}
+
+    Generated from: {source_file}
+    Session: {session_id}
+
+    🤖 Generated with Claude Code Automation
+  auto_push: true
+  create_pr: true
+  pr_template: |
+    ## Automated Content Update
+
+    **Category**: {category}
+    **Source**: {source_file}
+    **Processing Time**: {processing_time}s
+
+    This PR contains automatically processed content from the digital garden automation system.
+
+    ### Changes
+    {changes_summary}
+
+    🤖 Generated with Claude Code Automation
+  enable_gh_pages: true
+
+# Performance configuration
+performance:
+  max_concurrent_transcriptions: 2
+  max_concurrent_classifications: 5
+  max_concurrent_research: 3
+  memory_limit_mb: 2048
+  disk_cleanup_threshold_gb: 10
+  cache_ttl_hours: 24
+
+# Logging configuration
+logging:
+  level: "INFO"
+  file_enabled: true
+  console_enabled: true
+  file_path: "logs/automation.log"
+  max_file_size_mb: 50
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Quality control settings
+quality:
+  min_text_length: 50
+  max_text_length: 50000
+  min_transcription_confidence: 0.7
+  min_classification_confidence: 0.8
+  required_metadata_fields: ["category", "title", "priority"]
+  content_validation: true
+
+# Security settings
+security:
+  sanitize_content: true
+  remove_pii: true
+  allowed_file_types:
+    - "mp3"
+    - "wav"
+    - "flac"
+    - "m4a"
+    - "ogg"
+    - "mp4"
+    - "avi"
+    - "mov"
+    - "mkv"
+    - "webm"
+    - "txt"
+    - "md"
+    - "rtf"
+  max_file_size_mb: 500
+  virus_scan: false
+
+# File handling configuration (additional settings)
+file_handling:
+  create_backups: true
+  backup_retention_days: 30
+  compress_archives: true
+  preserve_metadata: true

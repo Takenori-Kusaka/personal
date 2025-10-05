@@ -177,6 +177,12 @@ create_asciidoc.py
 reference/
 samples/
 
+# But include Digital Garden public assets
+!digital-garden/public/*.png
+!digital-garden/public/*.jpg
+!digital-garden/public/*.jpeg
+!digital-garden/public/*.svg
+
 # ===================================
 # Digital Garden Automation System
 # ===================================

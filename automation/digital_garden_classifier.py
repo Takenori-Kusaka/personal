@@ -385,9 +385,8 @@ class DigitalGardenClassifier:
             # Add Mermaid diagram if generated
             if mermaid_diagram:
                 enhanced_parts.append("## 概要図\n")
-                enhanced_parts.append("```mermaid")
-                enhanced_parts.append(mermaid_diagram)
-                enhanced_parts.append("```\n")
+                enhanced_parts.append(mermaid_diagram)  # Already wrapped in <div class="mermaid">
+                enhanced_parts.append("")  # Empty line for spacing
                 print("[OK] Mermaid diagram added")
             else:
                 print("[WARN] Mermaid diagram generation failed, continuing without it")

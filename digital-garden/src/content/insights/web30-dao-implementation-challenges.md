@@ -8,14 +8,14 @@ draft: false
 ---
 ## 概要図
 
-```mermaid
+<div class="mermaid">
 graph TD
     A[Web3.0] --> B[技術革新]
     A --> C[社会実装]
     B --> D[DAO]
     C --> E[実用課題]
     D --> E
-```
+</div>
 
 ## 核心的な洞察
 

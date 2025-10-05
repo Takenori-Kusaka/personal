@@ -114,7 +114,7 @@ class SimpleTemplateManager:
 
 ---
 
-以下の構造で出力してください:
+以下の構造で出力してください（タイトルは含めないこと）:
 
 ## 核心的な洞察
 
@@ -137,7 +137,11 @@ class SimpleTemplateManager:
 
 ---
 
-重要: 各セクションは簡潔に。不要な情報は削除。読みやすさを最優先。"""
+重要:
+- タイトル（#や##で始まる行）は含めないこと
+- 各セクションは簡潔に
+- 不要な情報は削除
+- 読みやすさを最優先"""
 
     def get_template_for_category(self, category: str) -> Dict[str, str]:
         """

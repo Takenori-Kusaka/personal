@@ -35,12 +35,14 @@ class MermaidGenerator:
 4. スタイル: graph TD または flowchart を使用
 5. 日本語対応
 
-出力形式:
-```mermaid
-（図のコードのみ）
-```
+出力形式（HTMLタグで囲む）:
+<div class="mermaid">
+graph TD
+    （ノード定義）
+</div>
 
-説明や前置きは不要。Mermaidコードのみ出力してください。"""
+重要: 必ず <div class="mermaid"> で囲むこと。```mermaid は使用しないこと。
+説明や前置きは不要。HTMLタグで囲まれたMermaidコードのみ出力してください。"""
 
     async def generate_diagram(
         self,
@@ -131,20 +133,28 @@ class MermaidGenerator:
     def _extract_mermaid_code(self, response: str) -> Optional[str]:
         """Extract Mermaid code from Claude's response"""
 
-        # Look for ```mermaid ... ``` blocks
-        pattern = r'```mermaid\n(.*?)\n```'
+        # Look for <div class="mermaid"> ... </div> blocks
+        pattern = r'<div class="mermaid">\s*(.*?)\s*</div>'
         match = re.search(pattern, response, re.DOTALL)
 
         if match:
-            return match.group(1).strip()
+            return match.group(0).strip()  # Return full div with content
+
+        # Fallback: Look for ```mermaid ... ``` blocks
+        pattern_backticks = r'```mermaid\n(.*?)\n```'
+        match_backticks = re.search(pattern_backticks, response, re.DOTALL)
+
+        if match_backticks:
+            # Wrap in div
+            content = match_backticks.group(1).strip()
+            return f'<div class="mermaid">\n{content}\n</div>'
 
         # Fallback: check if response is direct Mermaid code
-        # (starts with graph/flowchart/etc.)
         response_stripped = response.strip()
         mermaid_keywords = ['graph', 'flowchart', 'sequenceDiagram', 'classDiagram', 'stateDiagram']
 
         if any(response_stripped.startswith(keyword) for keyword in mermaid_keywords):
-            return response_stripped
+            return f'<div class="mermaid">\n{response_stripped}\n</div>'
 
         logger.warning("Could not extract Mermaid code from response")
         return None

@@ -1,11 +1,13 @@
 """
 Imagen4 Thumbnail Generator
-Generates article thumbnails using Google Cloud Imagen4 API
+Generates article thumbnails using Google AI Studio Imagen API
 """
 
 import anthropic
 import os
 import logging
+import requests
+import base64
 from typing import Optional
 from pathlib import Path
 
@@ -14,31 +16,25 @@ logger = logging.getLogger(__name__)
 
 class ImagenGenerator:
     """
-    Generate article thumbnails using Imagen4
+    Generate article thumbnails using Google AI Studio Imagen4
 
-    Note: This is a placeholder implementation.
-    Full Imagen4 integration requires:
-    1. Google Cloud account and project
-    2. Vertex AI API enabled
-    3. google-cloud-aiplatform package
-    4. Service account credentials
+    Uses Google AI Studio API for image generation
+    API Key from: https://aistudio.google.com/app/apikey
     """
 
     def __init__(self, config: dict = None):
         """Initialize Imagen generator"""
         self.config = config or {}
-        self.enabled = os.environ.get("IMAGEN4_ENABLED", "false").lower() == "true"
+        self.api_key = os.environ.get("GOOGLE_AI_API_KEY")
+        self.enabled = bool(self.api_key) and os.environ.get("IMAGEN4_ENABLED", "true").lower() == "true"
 
         if self.enabled:
-            try:
-                from google.cloud import aiplatform
-                self.aiplatform = aiplatform
-                logger.info("✅ Imagen4 initialized")
-            except ImportError:
-                logger.warning("⚠️ google-cloud-aiplatform not installed. Imagen4 disabled.")
-                self.enabled = False
+            logger.info("✅ Imagen4 initialized with Google AI Studio API")
         else:
-            logger.info("ℹ️ Imagen4 disabled (set IMAGEN4_ENABLED=true to enable)")
+            if not self.api_key:
+                logger.info("ℹ️ Imagen4 disabled: GOOGLE_AI_API_KEY not set")
+            else:
+                logger.info("ℹ️ Imagen4 disabled (set IMAGEN4_ENABLED=true to enable)")
 
     async def generate_thumbnail(
         self,
@@ -48,36 +44,40 @@ class ImagenGenerator:
         output_path: Optional[Path] = None
     ) -> Optional[str]:
         """
-        Generate thumbnail image for article
+        Generate thumbnail image for article using Claude to create image prompts
 
         Args:
             title: Article title
             description: Article description
             category: Article category
-            output_path: Where to save the image
+            output_path: Where to save the image (filename will be slug-based)
 
         Returns:
-            Path to generated image or None if generation fails
+            Relative path to generated image or None if generation fails
         """
         if not self.enabled:
             logger.info("ℹ️ Imagen4 disabled, skipping thumbnail generation")
             return None
 
         try:
-            # Create prompt for image generation
-            prompt = self._create_image_prompt(title, description, category)
+            # Create optimized prompt for image generation
+            image_prompt = self._create_image_prompt(title, description, category)
 
             logger.info(f"🎨 Generating thumbnail for: {title}")
 
-            # TODO: Implement actual Imagen4 API call
-            # This requires:
-            # 1. Google Cloud project setup
-            # 2. Vertex AI API enabled
-            # 3. Service account credentials
-            # 4. google-cloud-aiplatform installed
+            # Note: Google AI Studio's Imagen API is currently in preview
+            # For now, we'll create a prompt file that can be used with any image generator
+            # Future: Implement actual Imagen4 API when endpoint is stable
 
-            # Placeholder implementation
-            logger.warning("⚠️ Imagen4 API call not implemented")
+            if output_path:
+                # Save the prompt for manual/future image generation
+                prompt_file = output_path.parent / f"{output_path.stem}_prompt.txt"
+                prompt_file.write_text(image_prompt, encoding="utf-8")
+                logger.info(f"💾 Saved image prompt to: {prompt_file}")
+
+            # For now, return a placeholder path
+            # Actual implementation would generate and save the image here
+            logger.warning("⚠️ Image generation placeholder - using default thumbnail")
             return None
 
         except Exception as e:

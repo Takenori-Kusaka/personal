@@ -25,62 +25,46 @@ const categoryEmoji = {
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
-<article class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden h-full flex flex-col relative">
-  <!-- Thumbnail Image -->
-  {thumbnail && (
-    <div class="w-full h-48 bg-gray-200 overflow-hidden">
-      <img
-        src={`${baseUrl}${thumbnail}`}
-        alt={title}
-        class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-      />
-    </div>
-  )}
-
-  <div class="p-6 flex flex-col flex-grow">
-    <div class="mb-3">
-      <span class="text-2xl">{categoryEmoji[category as keyof typeof categoryEmoji]}</span>
-      <span class="ml-2 text-sm text-gray-500">{formattedDate}</span>
-    </div>
-
-    <h3 class="text-xl font-bold mb-2 hover:text-blue-600 transition">
-      <a href={url} class="stretched-link">
-        {title}
-      </a>
-    </h3>
-
-    <p class="text-gray-600 mb-4 flex-grow line-clamp-3">
-      {description}
-    </p>
-
-    {tags.length > 0 && (
-      <div class="flex flex-wrap gap-2 mt-auto">
-        {tags.slice(0, 3).map((tag) => (
-          <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-            #{tag}
-          </span>
-        ))}
-        {tags.length > 3 && (
-          <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-            +{tags.length - 3}
-          </span>
-        )}
+<a href={url} class="block h-full">
+  <article class="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden h-full flex flex-col">
+    <!-- Thumbnail Image -->
+    {thumbnail && (
+      <div class="w-full h-48 bg-gray-200 overflow-hidden">
+        <img
+          src={`${baseUrl}${thumbnail}`}
+          alt={title}
+          class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+        />
       </div>
     )}
-  </div>
-</article>
+
+    <div class="p-6 flex flex-col flex-grow">
+      <div class="mb-3">
+        <span class="text-2xl">{categoryEmoji[category as keyof typeof categoryEmoji]}</span>
+        <span class="ml-2 text-sm text-gray-500">{formattedDate}</span>
+      </div>
+
+      <h3 class="text-xl font-bold mb-2 hover:text-blue-600 transition">
+        {title}
+      </h3>
+
+      <p class="text-gray-600 mb-4 flex-grow line-clamp-3">
+        {description}
+      </p>
+
+      {tags.length > 0 && <div class="flex flex-wrap gap-2 mt-auto">
+          {tags.slice(0, 3).map((tag) => <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+              #{tag}
+            </span>)}
+          {tags.length > 3 && <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+              +{tags.length - 3}
+            </span>}
+        </div>}
+    </div>
+  </article>
+</a>
 
 <style>
-  .stretched-link::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-  }
-
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;

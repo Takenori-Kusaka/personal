@@ -5,7 +5,9 @@
       "Bash(for img in hero-background.png favicon.png og-image.png)",
       "Bash(do echo -n \"$img: \")",
       "Bash(done)",
-      "SlashCommand(/sc:troubleshoot:*)"
+      "SlashCommand(/sc:troubleshoot:*)",
+      "Bash(npm run dev:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

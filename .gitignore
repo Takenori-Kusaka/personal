@@ -54,6 +54,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+test-reports/
 
 # ===================================
 # Generated Output Files
@@ -109,6 +110,8 @@ $RECYCLE.BIN/
 *.backup
 *.tmp
 *_backup.*
+*_backup/
+*-backup/
 *_legacy.*
 
 # Temporary files

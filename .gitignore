@@ -218,3 +218,16 @@ automation/temp/
 # Debug output
 debug.log
 *.debug
+
+# ===================================
+# Digital Garden Astro Site
+# ===================================
+# Astro build output
+digital-garden/dist/
+digital-garden/.astro/
+
+# Node modules
+digital-garden/node_modules/
+
+# Astro cache
+digital-garden/.turbo/

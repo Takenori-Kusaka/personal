@@ -1,0 +1,208 @@
+---
+// Resume page - Integrated from Resume Management System
+---
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="職務経歴書 - 日下武紀">
+    <meta name="author" content="Resume Management System v2.0 + Digital Garden">
+    <title>職務経歴書 | Digital Garden</title>
+    <style>
+/* Resume Web Styles */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.nav-bar {
+    max-width: 900px;
+    margin: 0 auto 20px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-bar a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-bar a:hover {
+    color: #764ba2;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+}
+
+h1 {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-align: center;
+    margin-bottom: 10px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #667eea;
+}
+
+h2 {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-top: 35px;
+    margin-bottom: 20px;
+    padding-left: 15px;
+    border-left: 4px solid #667eea;
+}
+
+h3 {
+    font-size: 1.4em;
+    font-weight: 600;
+    color: #34495e;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+h4 {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #555;
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
+
+p {
+    margin: 12px 0;
+    text-align: justify;
+}
+
+ul {
+    margin: 15px 0;
+    padding-left: 30px;
+}
+
+li {
+    margin: 8px 0;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 30px 0;
+}
+
+strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.update-date {
+    text-align: center;
+    color: #666;
+    font-size: 0.95em;
+    margin-bottom: 20px;
+}
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .nav-bar {
+        display: none;
+    }
+
+    .container {
+        box-shadow: none;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+}
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="/personal/">← Digital Gardenに戻る</a>
+        <span>Resume Management System v2.0</span>
+    </nav>
+
+    <div class="container" id="resume-content">
+        <h1>職務経歴書：日下武紀</h1>
+        <p class="update-date"><strong>最終更新日</strong>: 2025-10-04</p>
+
+        <p style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+            📋 このページはResume Management Systemにより自動生成されています<br>
+            最新の職務経歴書は<a href="/personal/">こちら</a>からご覧ください
+        </p>
+
+        <hr />
+
+        <h2>基本情報</h2>
+        <ul>
+            <li><strong>氏名</strong>: 日下武紀</li>
+            <li><strong>性別</strong>: 男</li>
+            <li><strong>生年月日</strong>: 1991年3月19日</li>
+            <li><strong>年齢</strong>: 33歳</li>
+            <li><strong>出身地</strong>: 滋賀県</li>
+            <li><strong>趣味</strong>: 読書, ゲーム, 映画鑑賞, 技術調査</li>
+        </ul>
+
+        <p style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #666;">
+            ※ 完全な職務経歴書はGitHub Actionsにより自動生成されます
+        </p>
+    </div>
+
+    <script>
+        // Print functionality
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                window.print();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-name: Build and Deploy Resume
+name: Build Resume
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
       - 'data/**'
       - 'src/**'
       - 'templates/**'
-      - '.github/workflows/**'
+      - '.github/workflows/build-and-deploy.yml'
   pull_request:
     branches: [main]
     paths:
@@ -18,12 +18,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   # Quality check job for PRs and pushes
@@ -93,14 +87,11 @@ jobs:
           echo "Markdown: $md_size bytes"
           echo "HTML: $html_size bytes"
 
-  # Build and deploy job (only on main branch)
-  build-and-deploy:
+  # Build job (only on main branch) - no longer deploys to Pages
+  build-resume:
     if: github.ref == 'refs/heads/main'
     needs: quality-check
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
@@ -121,20 +112,22 @@ jobs:
           echo "🚀 Generating resume files..."
           python src/main.py
 
-          echo "📁 Creating docs structure..."
-          mkdir -p docs/resume
-          mkdir -p docs/assets
+          echo "📁 Creating output structure..."
+          mkdir -p output
 
-          # Copy generated files to docs
-          cp output/resume.html docs/resume/index.html
-          cp output/resume.md docs/resume/resume.md
+          echo "✅ Resume files generated in output/ directory"
 
-          # Copy assets
-          cp -r templates/styles docs/assets/
+      - name: Upload resume artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-files
+          path: |
+            output/resume.html
+            output/resume.md
 
-      - name: Create portfolio index
+      - name: Create old portfolio index placeholder
         run: |
-          cat > docs/index.html << 'EOF'
+          cat > output/deprecated-notice.html << 'EOF'
           <!DOCTYPE html>
           <html lang="ja">
           <head>
@@ -236,29 +229,16 @@ jobs:
           </html>
           EOF
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./docs
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
       - name: Create summary
         run: |
           echo "## 🎉 Resume Generation Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ **Generation Status**: Success" >> $GITHUB_STEP_SUMMARY
           echo "📅 **Build Time**: $(date)" >> $GITHUB_STEP_SUMMARY
-          echo "🔗 **Site URL**: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "📦 **Artifact**: Resume files uploaded as artifact" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Generated Files" >> $GITHUB_STEP_SUMMARY
-          echo "- 📋 Resume HTML: [View Resume](${{ steps.deployment.outputs.page_url }}resume/)" >> $GITHUB_STEP_SUMMARY
-          echo "- 📝 Resume Markdown: [Download MD](${{ steps.deployment.outputs.page_url }}resume/resume.md)" >> $GITHUB_STEP_SUMMARY
+          echo "ℹ️ **Note**: Resume is now integrated into Digital Garden site" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **View Resume**: https://takenori-kusaka.github.io/personal/resume/" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # File sizes

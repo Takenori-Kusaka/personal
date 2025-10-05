@@ -185,6 +185,7 @@ samples/
 !digital-garden/public/*.jpg
 !digital-garden/public/*.jpeg
 !digital-garden/public/*.svg
+!digital-garden/public/thumbnails/*.png
 
 # ===================================
 # Digital Garden Automation System

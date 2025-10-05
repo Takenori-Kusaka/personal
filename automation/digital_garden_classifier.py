@@ -29,6 +29,7 @@ class ClassificationResult:
     """分類結果"""
     category: str  # insights, ideas, weekly-reviews
     title: str
+    slug: str  # URL-safe slug
     description: str
     tags: List[str]
     confidence: float
@@ -152,6 +153,7 @@ class DigitalGardenClassifier:
 {{
   "category": "insights | ideas | weekly-reviews のいずれか",
   "title": "魅力的でわかりやすいタイトル（40文字以内）",
+  "slug": "url-safe-english-slug",
   "description": "内容の要約（100文字以内）",
   "tags": ["タグ1", "タグ2", "タグ3"],
   "confidence": 0.95,
@@ -162,9 +164,13 @@ class DigitalGardenClassifier:
 ## 注意事項
 
 1. **タイトル**: キャッチーで検索しやすい
-2. **description**: SEO対策も考慮した要約
-3. **tags**: 技術名、トピック、分野など（3-5個）
-4. **markdown_content**:
+2. **slug**: URL-safe な英語のスラグ（小文字、ハイフン区切り、40文字以内）
+   - 日本語タイトルの場合は意味を反映した英語スラグを生成
+   - 例: "Claude 4.5の進化" → "claude-45-evolution"
+   - 例: "Web3.0コミュニティ" → "web30-community"
+3. **description**: SEO対策も考慮した要約
+4. **tags**: 技術名、トピック、分野など（3-5個）
+5. **markdown_content**:
    - 見出し（##, ###）を適切に使用
    - コードブロックは```言語名で囲む
    - リストや強調を活用
@@ -201,9 +207,15 @@ class DigitalGardenClassifier:
                 "draft": False,
             }
 
+            # Claude-generated slug を取得、なければタイトルから生成
+            slug = result_json.get("slug")
+            if not slug:
+                slug = self._generate_slug(result_json["title"])
+
             return ClassificationResult(
                 category=result_json["category"],
                 title=result_json["title"],
+                slug=slug,
                 description=result_json["description"],
                 tags=result_json["tags"],
                 confidence=result_json.get("confidence", 0.0),
@@ -235,8 +247,8 @@ class DigitalGardenClassifier:
         category_dir = output_dir / result.category
         category_dir.mkdir(parents=True, exist_ok=True)
 
-        # ファイル名生成（タイトルから）
-        slug = self._generate_slug(result.title)
+        # ファイル名はresult.slugを使用（Claude APIが生成）
+        slug = result.slug
         output_file = category_dir / f"{slug}.md"
 
         # ファイルが既に存在する場合はタイムスタンプを追加
@@ -255,11 +267,21 @@ class DigitalGardenClassifier:
         return output_file
 
     def _generate_slug(self, title: str) -> str:
-        """タイトルからスラグを生成"""
+        """タイトルからURL-safeなスラグを生成"""
         import re
+        import unicodedata
 
-        # 英数字と日本語以外を削除
-        slug = re.sub(r'[^\w\s-]', '', title.lower())
+        # Unicode正規化（NFKDで分解して、結合文字を削除）
+        slug = unicodedata.normalize('NFKD', title)
+
+        # ASCIIのみを保持（日本語などを削除）
+        slug = slug.encode('ascii', 'ignore').decode('ascii')
+
+        # 小文字化
+        slug = slug.lower()
+
+        # 英数字とハイフン以外を削除
+        slug = re.sub(r'[^a-z0-9\s-]', '', slug)
 
         # スペースをハイフンに
         slug = re.sub(r'[\s_]+', '-', slug)
@@ -274,7 +296,7 @@ class DigitalGardenClassifier:
         if len(slug) > 50:
             slug = slug[:50].rsplit('-', 1)[0]
 
-        # 空の場合はタイムスタンプ
+        # 空の場合はタイムスタンプ（日本語タイトルなどでASCII変換後に空になった場合）
         if not slug:
             slug = datetime.now().strftime("%Y%m%d-%H%M%S")
 

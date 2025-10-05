@@ -10,6 +10,7 @@ interface Props {
     tags: string[];
     category: string;
     author?: string;
+    thumbnail?: string;
     transcriptionSource?: string;
     researchCitations?: Array<{
       title: string;
@@ -30,10 +31,23 @@ const updatedFormattedDate = frontmatter.updatedDate?.toLocaleDateString('ja-JP'
   month: 'long',
   day: 'numeric'
 });
+
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title={frontmatter.title} description={frontmatter.description}>
   <article class="max-w-4xl mx-auto">
+    <!-- Thumbnail Image -->
+    {frontmatter.thumbnail && (
+      <div class="w-full mb-8 rounded-lg overflow-hidden shadow-lg">
+        <img
+          src={`${baseUrl}${frontmatter.thumbnail}`}
+          alt={frontmatter.title}
+          class="w-full h-auto object-cover"
+        />
+      </div>
+    )}
+
     <!-- Header -->
     <header class="mb-8 pb-8 border-b">
       <div class="mb-4">

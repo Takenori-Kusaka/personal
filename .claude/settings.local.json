@@ -36,7 +36,8 @@
       "Bash(curl:*)",
       "Bash(git rm:*)",
       "Bash(npm install:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "SlashCommand(/sc:troubleshoot)"
     ],
     "deny": [],
     "ask": []

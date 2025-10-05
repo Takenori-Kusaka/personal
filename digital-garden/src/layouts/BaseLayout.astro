@@ -22,24 +22,24 @@ const fullUrl = `${siteUrl}${baseUrl}`;
   <meta name="author" content="日下武紀 (Takenori Kusaka)">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="512x512" href={`${baseUrl}favicon.png`}>
-  <link rel="apple-touch-icon" href={`${baseUrl}favicon.png`}>
+  <link rel="icon" type="image/png" sizes="512x512" href={`${baseUrl}/favicon.png`}>
+  <link rel="apple-touch-icon" href={`${baseUrl}/favicon.png`}>
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content={fullUrl}>
-  <meta property="og:title" content={`${title} | Digital Garden`}>
+  <meta property="og:title" content={`${title} | 日下武紀`}>
   <meta property="og:description" content={description}>
-  <meta property="og:image" content={`${siteUrl}${baseUrl}og-image.png`}>
-  <meta property="og:site_name" content="Digital Garden">
+  <meta property="og:image" content={`${siteUrl}${baseUrl}/og-image.png`}>
+  <meta property="og:site_name" content="日下武紀 - Knowledge Base">
   <meta property="og:locale" content="ja_JP">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content={fullUrl}>
-  <meta name="twitter:title" content={`${title} | Digital Garden`}>
+  <meta name="twitter:title" content={`${title} | 日下武紀`}>
   <meta name="twitter:description" content={description}>
-  <meta name="twitter:image" content={`${siteUrl}${baseUrl}og-image.png`}>
+  <meta name="twitter:image" content={`${siteUrl}${baseUrl}/og-image.png`}>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -64,18 +64,26 @@ const fullUrl = `${siteUrl}${baseUrl}`;
     });
   </script>
 
-  <title>{title} | Digital Garden</title>
+  <title>{title} | 日下武紀</title>
 </head>
 <body class="min-h-screen bg-gray-50 text-gray-900">
   <!-- Header -->
   <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold">
-          <a href={baseUrl} class="text-blue-600 hover:text-blue-700 transition">
-            Digital Garden
+        <div class="flex items-center gap-3">
+          <a href={baseUrl} class="flex items-center gap-3 hover:opacity-80 transition">
+            <img
+              src={`${baseUrl}/profile-photo.png`}
+              alt="日下武紀"
+              class="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+            />
+            <div>
+              <h1 class="text-xl font-bold text-gray-900">日下 武紀</h1>
+              <p class="text-xs text-gray-500">Knowledge Base</p>
+            </div>
           </a>
-        </h1>
+        </div>
         <nav class="flex gap-6">
           <a href={`${baseUrl}insights/`} class="text-gray-700 hover:text-blue-600 transition">
             Insights
@@ -106,7 +114,7 @@ const fullUrl = `${siteUrl}${baseUrl}`;
   <footer class="bg-white border-t mt-16">
     <div class="container mx-auto px-4 py-8">
       <div class="text-center text-gray-600">
-        <p>&copy; 2025 Takenori Kusaka. Powered by Digital Garden Automation System.</p>
+        <p>&copy; 2025 日下武紀 (Takenori Kusaka). Powered by Digital Garden Automation System.</p>
         <div class="flex justify-center gap-4 mt-4 text-sm flex-wrap">
           <a href="https://github.com/Takenori-Kusaka" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
             GitHub

@@ -4,7 +4,8 @@
       "Bash(git check-ignore:*)",
       "Bash(for img in hero-background.png favicon.png og-image.png)",
       "Bash(do echo -n \"$img: \")",
-      "Bash(done)"
+      "Bash(done)",
+      "SlashCommand(/sc:troubleshoot:*)"
     ],
     "deny": [],
     "ask": []

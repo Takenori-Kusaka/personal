@@ -51,6 +51,12 @@ jobs:
           python src/main.py
           echo "✅ Resume files generated"
 
+      - name: Copy Resume to Digital Garden
+        run: |
+          echo "📋 Copying resume to Astro pages..."
+          cp output/resume.html digital-garden/src/pages/resume.astro
+          echo "✅ Resume copied to digital-garden/src/pages/resume.astro"
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 

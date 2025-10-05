@@ -25,6 +25,7 @@ from automation.utils.env_loader import get_required_env, load_environment
 # ✨ New: Import visual and templating components
 from automation.components.visual.mermaid_generator import MermaidGenerator
 from automation.components.templating.simple_template import SimpleTemplateManager
+from automation.components.image.imagen_generator import ImagenGenerator
 
 # 環境変数をロード
 load_environment()
@@ -73,7 +74,8 @@ class DigitalGardenClassifier:
         if self.enable_enhancements:
             self.mermaid_generator = MermaidGenerator()
             self.template_manager = SimpleTemplateManager()
-            print(f"[OK] Claude Classifier initialized with enhancements (Mermaid + Templates)")
+            self.imagen_generator = ImagenGenerator()
+            print(f"[OK] Claude Classifier initialized with enhancements (Mermaid + Templates + Imagen4)")
         else:
             print(f"[OK] Claude Classifier initialized with model: {self.model}")
 
@@ -328,31 +330,38 @@ class DigitalGardenClassifier:
         マークダウンファイルの内容を生成
 
         ✨ Enhanced with:
+        - Thumbnail image (if enhancements enabled)
         - Mermaid diagram (if enhancements enabled)
         - Template structure (if enhancements enabled)
         """
-        # フロントマター
-        frontmatter_lines = ["---"]
-        frontmatter_lines.append(f"title: '{result.frontmatter['title']}'")
-        frontmatter_lines.append(f"description: '{result.frontmatter['description']}'")
-        frontmatter_lines.append(f"pubDate: {result.frontmatter['pubDate']}")
-        frontmatter_lines.append(f"tags: {json.dumps(result.frontmatter['tags'], ensure_ascii=False)}")
-        frontmatter_lines.append(f"category: '{result.frontmatter['category']}'")
-        frontmatter_lines.append(f"draft: {str(result.frontmatter['draft']).lower()}")
-        frontmatter_lines.append("---")
-
-        # ✨ Enhanced content with Mermaid and Template
+        # ✨ Enhanced content with Imagen4, Mermaid and Template
+        # This must be called BEFORE generating frontmatter so thumbnail path is included
         if self.enable_enhancements:
             enhanced_content = self._enhance_content(result)
             content = f"\n{enhanced_content}\n"
         else:
             content = f"\n{result.markdown_content}\n"
 
+        # フロントマター (generated after enhancements to include thumbnail)
+        frontmatter_lines = ["---"]
+        frontmatter_lines.append(f"title: '{result.frontmatter['title']}'")
+        frontmatter_lines.append(f"description: '{result.frontmatter['description']}'")
+        frontmatter_lines.append(f"pubDate: {result.frontmatter['pubDate']}")
+        frontmatter_lines.append(f"tags: {json.dumps(result.frontmatter['tags'], ensure_ascii=False)}")
+        frontmatter_lines.append(f"category: '{result.frontmatter['category']}'")
+
+        # Add thumbnail if generated
+        if 'thumbnail' in result.frontmatter:
+            frontmatter_lines.append(f"thumbnail: '{result.frontmatter['thumbnail']}'")
+
+        frontmatter_lines.append(f"draft: {str(result.frontmatter['draft']).lower()}")
+        frontmatter_lines.append("---")
+
         return "\n".join(frontmatter_lines) + content
 
     def _enhance_content(self, result: ClassificationResult) -> str:
         """
-        ✨ New: Enhance content with Mermaid diagram and template structure
+        ✨ New: Enhance content with Mermaid diagram, template structure, and thumbnail
 
         Args:
             result: Classification result
@@ -361,9 +370,26 @@ class DigitalGardenClassifier:
             Enhanced markdown content
         """
         try:
-            print("[INFO] Enhancing content with Mermaid and Template...")
+            print("[INFO] Enhancing content with Mermaid, Template, and Imagen4...")
 
-            # 1. Generate Mermaid diagram
+            # 1. Generate thumbnail image
+            thumbnail_path = asyncio.run(
+                self.imagen_generator.generate_thumbnail(
+                    title=result.title,
+                    description=result.description,
+                    category=result.category,
+                    output_path=Path(f"digital-garden/public/thumbnails/{result.slug}.png")
+                )
+            )
+
+            # Update frontmatter with thumbnail path if generated
+            if thumbnail_path:
+                result.frontmatter['thumbnail'] = f"/thumbnails/{result.slug}.png"
+                print(f"[OK] Thumbnail generated: {thumbnail_path}")
+            else:
+                print("[WARN] Thumbnail generation failed, continuing without it")
+
+            # 2. Generate Mermaid diagram
             mermaid_diagram = asyncio.run(
                 self.mermaid_generator.generate_diagram(
                     title=result.title,
@@ -372,14 +398,14 @@ class DigitalGardenClassifier:
                 )
             )
 
-            # 2. Apply template structure
+            # 3. Apply template structure
             structured_content = self.template_manager.apply_template(
                 content=result.markdown_content,
                 title=result.title,
                 category=result.category
             )
 
-            # 3. Combine: Mermaid diagram + Structured content
+            # 4. Combine: Mermaid diagram + Structured content
             enhanced_parts = []
 
             # Add Mermaid diagram if generated

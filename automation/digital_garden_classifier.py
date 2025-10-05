@@ -3,7 +3,7 @@ Digital Garden Content Classifier
 Claude APIを使用したコンテンツ分類・構造化システム
 
 Author: Claude Code Assistant
-Date: 2025-10-04
+Date: 2025-10-05 (Updated with Mermaid and Template support)
 """
 
 import os
@@ -12,6 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
+import asyncio
 
 try:
     import anthropic
@@ -20,6 +21,10 @@ except ImportError:
     ANTHROPIC_AVAILABLE = False
 
 from automation.utils.env_loader import get_required_env, load_environment
+
+# ✨ New: Import visual and templating components
+from automation.components.visual.mermaid_generator import MermaidGenerator
+from automation.components.templating.simple_template import SimpleTemplateManager
 
 # 環境変数をロード
 load_environment()
@@ -40,10 +45,19 @@ class DigitalGardenClassifier:
     """
     デジタルガーデン用コンテンツ分類システム
     Claude 3.5 Sonnetを使用してテキストを自動分類・構造化
+
+    ✨ Enhanced with:
+    - Mermaid diagram generation
+    - Template-based structure
     """
 
-    def __init__(self):
-        """初期化"""
+    def __init__(self, enable_enhancements: bool = True):
+        """
+        初期化
+
+        Args:
+            enable_enhancements: Mermaid/Template機能を有効にするか（デフォルト: True）
+        """
         if not ANTHROPIC_AVAILABLE:
             raise ImportError(
                 "anthropic package not installed. "
@@ -54,7 +68,14 @@ class DigitalGardenClassifier:
         self.model = os.getenv("CLAUDE_MODEL", "claude-3-5-sonnet-20241022")
         self.client = anthropic.Anthropic(api_key=self.api_key)
 
-        print(f"[OK] Claude Classifier initialized with model: {self.model}")
+        # ✨ New: Initialize enhancement components
+        self.enable_enhancements = enable_enhancements
+        if self.enable_enhancements:
+            self.mermaid_generator = MermaidGenerator()
+            self.template_manager = SimpleTemplateManager()
+            print(f"[OK] Claude Classifier initialized with enhancements (Mermaid + Templates)")
+        else:
+            print(f"[OK] Claude Classifier initialized with model: {self.model}")
 
     def classify_content(
         self,
@@ -303,7 +324,13 @@ class DigitalGardenClassifier:
         return slug
 
     def _generate_markdown(self, result: ClassificationResult) -> str:
-        """マークダウンファイルの内容を生成"""
+        """
+        マークダウンファイルの内容を生成
+
+        ✨ Enhanced with:
+        - Mermaid diagram (if enhancements enabled)
+        - Template structure (if enhancements enabled)
+        """
         # フロントマター
         frontmatter_lines = ["---"]
         frontmatter_lines.append(f"title: '{result.frontmatter['title']}'")
@@ -314,10 +341,67 @@ class DigitalGardenClassifier:
         frontmatter_lines.append(f"draft: {str(result.frontmatter['draft']).lower()}")
         frontmatter_lines.append("---")
 
-        # コンテンツ
-        content = f"\n{result.markdown_content}\n"
+        # ✨ Enhanced content with Mermaid and Template
+        if self.enable_enhancements:
+            enhanced_content = self._enhance_content(result)
+            content = f"\n{enhanced_content}\n"
+        else:
+            content = f"\n{result.markdown_content}\n"
 
         return "\n".join(frontmatter_lines) + content
+
+    def _enhance_content(self, result: ClassificationResult) -> str:
+        """
+        ✨ New: Enhance content with Mermaid diagram and template structure
+
+        Args:
+            result: Classification result
+
+        Returns:
+            Enhanced markdown content
+        """
+        try:
+            print("[INFO] Enhancing content with Mermaid and Template...")
+
+            # 1. Generate Mermaid diagram
+            mermaid_diagram = asyncio.run(
+                self.mermaid_generator.generate_diagram(
+                    title=result.title,
+                    content=result.markdown_content,
+                    category=result.category
+                )
+            )
+
+            # 2. Apply template structure
+            structured_content = self.template_manager.apply_template(
+                content=result.markdown_content,
+                title=result.title,
+                category=result.category
+            )
+
+            # 3. Combine: Mermaid diagram + Structured content
+            enhanced_parts = []
+
+            # Add Mermaid diagram if generated
+            if mermaid_diagram:
+                enhanced_parts.append("## 概要図\n")
+                enhanced_parts.append("```mermaid")
+                enhanced_parts.append(mermaid_diagram)
+                enhanced_parts.append("```\n")
+                print("[OK] Mermaid diagram added")
+            else:
+                print("[WARN] Mermaid diagram generation failed, continuing without it")
+
+            # Add structured content
+            enhanced_parts.append(structured_content)
+
+            print("[OK] Content enhancement completed")
+            return "\n".join(enhanced_parts)
+
+        except Exception as e:
+            print(f"[ERROR] Content enhancement failed: {e}")
+            print("[FALLBACK] Using original content")
+            return result.markdown_content
 
 
 def main():

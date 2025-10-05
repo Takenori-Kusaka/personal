@@ -1,0 +1,58 @@
+{
+  "name": "digital-garden",
+  "version": "1.0.0",
+  "description": "Personal digital garden for exhibition insights and inspirations",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "process-audio": "node scripts/audio-to-text.js",
+    "weekly-digest": "node scripts/weekly-digest.js",
+    "generate-thumbnails": "node scripts/generate-thumbnails.js"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^2.0.0",
+    "@astrojs/sitemap": "^3.0.0",
+    "@astrojs/tailwind": "^5.0.0",
+    "@astrojs/vercel": "^6.0.0",
+    "@google-cloud/aiplatform": "^3.9.0",
+    "@headlessui/react": "^1.7.17",
+    "@tailwindcss/typography": "^0.5.10",
+    "astro": "^4.0.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^2.30.0",
+    "fuse.js": "^7.0.0",
+    "gray-matter": "^4.0.3",
+    "mermaid": "^10.6.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "remark-gfm": "^4.0.0",
+    "tailwindcss": "^3.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-astro": "^0.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "prettier": "^3.1.0",
+    "prettier-plugin-astro": "^0.12.2",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.0"
+  },
+  "keywords": [
+    "digital-garden",
+    "exhibition-insights",
+    "personal-knowledge",
+    "astro",
+    "typescript"
+  ],
+  "author": "日下武紀",
+  "license": "MIT"
+}

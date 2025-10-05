@@ -13,7 +13,8 @@
       "Bash($env:PYTHONPATH='.')",
       "Bash($env:PYTHONIOENCODING='utf-8')",
       "Bash(npx playwright install:*)",
-      "Bash(set PYTHONPATH=%CD%)"
+      "Bash(set PYTHONPATH=%CD%)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

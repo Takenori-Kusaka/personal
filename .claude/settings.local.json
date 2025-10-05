@@ -11,7 +11,8 @@
       "Bash(tree:*)",
       "Bash(set PYTHONPATH=.)",
       "Bash($env:PYTHONPATH='.')",
-      "Bash($env:PYTHONIOENCODING='utf-8')"
+      "Bash($env:PYTHONIOENCODING='utf-8')",
+      "Bash(npx playwright install:*)"
     ],
     "deny": [],
     "ask": []

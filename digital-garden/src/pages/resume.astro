@@ -1,18 +1,18 @@
----
-// Resume page - Integrated from Resume Management System
----
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="職務経歴書 - 日下武紀">
-    <meta name="author" content="Resume Management System v2.0 + Digital Garden">
-    <title>職務経歴書 | Digital Garden</title>
+    <meta name="description" content="職務経歴書">
+    <meta name="author" content="Resume Management System v2.0">
+    <title>職務経歴書</title>
     <style>
 /* Resume Web Styles */
+/* Optimized for web display and responsive design */
+
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
+/* CSS Reset and Base Styles */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -24,67 +24,46 @@ body {
     font-size: 16px;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+    background: #f8f9fa;
+    margin: 0;
     padding: 20px;
 }
 
-.nav-bar {
-    max-width: 900px;
-    margin: 0 auto 20px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 15px 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-bar a {
-    color: #667eea;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
-}
-
-.nav-bar a:hover {
-    color: #764ba2;
-}
-
+/* Container */
 .container {
     max-width: 900px;
     margin: 0 auto;
     background: white;
     padding: 40px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
+/* Typography */
 h1 {
     font-size: 2.5em;
     font-weight: 700;
     color: #1a1a1a;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     padding-bottom: 15px;
-    border-bottom: 3px solid #667eea;
+    border-bottom: 3px solid #2c5aa0;
 }
 
 h2 {
     font-size: 1.8em;
     font-weight: 600;
-    color: #2c3e50;
-    margin-top: 35px;
+    color: #2c5aa0;
+    margin-top: 40px;
     margin-bottom: 20px;
     padding-left: 15px;
-    border-left: 4px solid #667eea;
+    border-left: 5px solid #2c5aa0;
 }
 
 h3 {
     font-size: 1.4em;
-    font-weight: 600;
-    color: #34495e;
+    font-weight: 500;
+    color: #444;
     margin-top: 25px;
     margin-bottom: 15px;
 }
@@ -94,57 +73,228 @@ h4 {
     font-weight: 500;
     color: #555;
     margin-top: 20px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
+/* Text elements */
 p {
-    margin: 12px 0;
+    margin-bottom: 15px;
     text-align: justify;
 }
 
+strong {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+/* Lists */
 ul {
     margin: 15px 0;
     padding-left: 30px;
 }
 
 li {
-    margin: 8px 0;
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
 
+/* Basic info section styling */
+.basic-info ul {
+    list-style: none;
+    padding: 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.basic-info li {
+    margin-bottom: 10px;
+    padding: 5px 0;
+}
+
+/* Company section styling */
+.company {
+    margin-bottom: 40px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.company h2 {
+    margin-top: 0;
+    background: linear-gradient(135deg, #2c5aa0 0%, #3d6fb0 100%);
+    color: white;
+    margin: -30px -30px 25px -30px;
+    padding: 20px 30px;
+    border-radius: 8px 8px 0 0;
+    border: none;
+}
+
+.company-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    border-left: 4px solid #2c5aa0;
+}
+
+.period-role {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Project styling */
+.project {
+    margin-bottom: 30px;
+    padding: 25px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+    transition: all 0.3s ease;
+}
+
+.project:hover {
+    border-color: #2c5aa0;
+    box-shadow: 0 4px 8px rgba(44, 90, 160, 0.1);
+}
+
+.project-header {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    margin: -25px -25px 20px -25px;
+    padding: 20px 25px;
+    border-radius: 6px 6px 0 0;
+    border-bottom: 2px solid #f1c40f;
+}
+
+.project-meta {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 15px;
+    background: #f8f9fa;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+/* Skills section */
+.skills-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.skill-category {
+    background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #bee5eb;
+}
+
+.skill-category h4 {
+    margin-top: 0;
+    color: #2c5aa0;
+    border-bottom: 2px solid #2c5aa0;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.skill-category ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 0.95em;
+}
+
+.skill-category li {
+    background: rgba(255, 255, 255, 0.7);
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    list-style: none;
+    position: relative;
+}
+
+.skill-category li:before {
+    content: "▪";
+    color: #2c5aa0;
+    position: absolute;
+    left: -15px;
+}
+
+/* Achievements and responsibilities */
+.achievements, .responsibilities {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-left: 4px solid #28a745;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+}
+
+.achievements h4, .responsibilities h4 {
+    margin-top: 0;
+    color: #155724;
+}
+
+/* Horizontal rules */
 hr {
     border: none;
-    border-top: 1px solid #e0e0e0;
+    height: 2px;
+    background: linear-gradient(90deg, #2c5aa0, #dee2e6, #2c5aa0);
     margin: 30px 0;
+    border-radius: 2px;
 }
 
-strong {
-    color: #2c3e50;
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.95em;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table th, table td {
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+table th {
+    background: linear-gradient(135deg, #2c5aa0 0%, #3d6fb0 100%);
+    color: white;
     font-weight: 600;
 }
 
-.update-date {
+/* Footer */
+.footer-info {
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 2px solid #dee2e6;
+    font-size: 0.9em;
+    color: #6c757d;
     text-align: center;
-    color: #666;
-    font-size: 0.95em;
-    margin-bottom: 20px;
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 8px;
 }
 
-@media print {
-    body {
-        background: white;
-        padding: 0;
-    }
-
-    .nav-bar {
-        display: none;
-    }
-
-    .container {
-        box-shadow: none;
-        padding: 20px;
-    }
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -152,6 +302,7 @@ strong {
 
     .container {
         padding: 20px;
+        margin: 0;
     }
 
     h1 {
@@ -161,48 +312,384 @@ strong {
     h2 {
         font-size: 1.5em;
     }
+
+    .basic-info ul {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .period-role {
+        flex-direction: column;
+    }
+
+    .project-meta {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .skills-section {
+        grid-template-columns: 1fr;
+    }
+
+    .company {
+        padding: 20px;
+    }
+
+    .company h2 {
+        margin: -20px -20px 20px -20px;
+        padding: 15px 20px;
+    }
+
+    .project {
+        padding: 20px;
+    }
+
+    .project-header {
+        margin: -20px -20px 15px -20px;
+        padding: 15px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+        padding: 20px;
+        max-width: none;
+    }
+
+    .footer-info {
+        background: white;
+    }
+
+    .project:hover {
+        box-shadow: none;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .project {
+        transition: none;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #1a1a1a;
+        color: #e0e0e0;
+    }
+
+    .container {
+        background: #2d2d2d;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    h1, strong {
+        color: #f0f0f0;
+    }
+
+    .basic-info ul, .company-info, .project-meta {
+        background: #3a3a3a;
+    }
+
+    .company {
+        background: #2d2d2d;
+        border-color: #444;
+    }
+
+    .project {
+        background: linear-gradient(135deg, #2d2d2d 0%, #3a3a3a 100%);
+        border-color: #444;
+    }
+
+    .footer-info {
+        background: #3a3a3a;
+    }
 }
     </style>
 </head>
 <body>
-    <nav class="nav-bar">
-        <a href="/personal/">← Digital Gardenに戻る</a>
-        <span>Resume Management System v2.0</span>
-    </nav>
-
-    <div class="container" id="resume-content">
-        <h1>職務経歴書：日下武紀</h1>
-        <p class="update-date"><strong>最終更新日</strong>: 2025-10-04</p>
-
-        <p style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
-            📋 このページはResume Management Systemにより自動生成されています<br>
-            最新の職務経歴書は<a href="/personal/">こちら</a>からご覧ください
-        </p>
-
-        <hr />
-
-        <h2>基本情報</h2>
-        <ul>
-            <li><strong>氏名</strong>: 日下武紀</li>
-            <li><strong>性別</strong>: 男</li>
-            <li><strong>生年月日</strong>: 1991年3月19日</li>
-            <li><strong>年齢</strong>: 33歳</li>
-            <li><strong>出身地</strong>: 滋賀県</li>
-            <li><strong>趣味</strong>: 読書, ゲーム, 映画鑑賞, 技術調査</li>
-        </ul>
-
-        <p style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #666;">
-            ※ 完全な職務経歴書はGitHub Actionsにより自動生成されます
-        </p>
+    <div class="container">
+<h1 id="_1">職務経歴書：日下武紀</h1>
+<p><strong>最終更新日</strong>: 2025-10-04</p>
+<hr />
+<h2 id="_2">基本情報</h2>
+<ul>
+<li><strong>氏名</strong>: 日下武紀</li>
+<li><strong>性別</strong>: 男</li>
+<li><strong>生年月日</strong>: 1991年3月19日</li>
+<li><strong>年齢</strong>: 33歳</li>
+<li><strong>出身地</strong>: 滋賀県</li>
+<li><strong>趣味</strong>: 読書, ゲーム, 映画鑑賞, 技術調査</li>
+</ul>
+<hr />
+<h2 id="_3">学歴</h2>
+<h3 id="_4">中学校</h3>
+<ul>
+<li><strong>学校名</strong>: 広島県廿日市市立吉和中学校</li>
+<li><strong>卒業年月</strong>: 2006年3月</li>
+<li><strong>備考</strong>: 山村留学で一人ぐらし</li>
+</ul>
+<h3 id="_5">高校</h3>
+<ul>
+<li><strong>学校名</strong>: 国立舞鶴工業高等専門学校</li>
+<li><strong>学科</strong>: 情報工学科卒- <strong>卒業年月</strong>: 2012年3月</li>
+<li><strong>備考</strong>: 高専ロボコンの全国大会に出場し、受賞経験あり</li>
+</ul>
+<hr />
+<h2 id="_6">職歴</h2>
+<h2 id="_7">太陽精機株式会社</h2>
+<p><strong>在籍期間</strong>: 2012年4月 ～ 2014年12月
+<strong>職種</strong>: 産業機械開発エンジニア</p>
+<p><strong>業務内容</strong>: 製本機の設計・開発</p>
+<p><strong>退社理由</strong>: 体調不良のため</p>
+<h3 id="_8">保有スキル</h3>
+<h3 id="_9">プロジェクト経験</h3>
+<h4 id="_10">製本機、折機、断裁機および周辺ラインを対象とした産業機械の設計・開発</h4>
+<p><strong>期間</strong>: 2012年4月 ～ 現在
+<strong>役割</strong>: プロジェクトメンバー
+<strong>チーム規模</strong>: 3～5名</p>
+<p><strong>主な担当業務</strong>:
+- 仕様設計
+- 制御ソフト開発
+- タッチパネルソフト開発
+- 回路設計
+- アートワーク設計
+- 配線設計
+- 配線作業</p>
+<p><strong>プロジェクト成果</strong>:
+- 内製化の利点: 社内で完結する製造工程により、製品開発のあらゆる段階を経験。具体的には、ファームウェア開発、配線、基板製造から運用までの工程を学びました。
+- 実践的学習: 本勤務先での経験を通じ、基板マスク設計、マスキング工程、板金加工やパンチング作業など、専門外の業務知識も習得。
+- 産業機械開発における総合的な知識: UL規格認証、DRシステム、ISO規格に基づく業務を含む一連のプロセスに関わり、産業機械開発に必要な広範な知識と経験を得ました。
+- メーカーとしての視点: 安全性、信頼性、部品選定、ソースコードの変更に伴う影響など、メーカー視点での多様な検討項目について学習しました。
+- 現場からのフィードバックの重要性: 内製化戦略のもと、現場の声を直接収集し、製品改善につなげる重要性を実感。お客様に出荷する前に、製品の使用感や改善点を把握できることが大きな強みとなりました。</p>
+<hr />
+<h2 id="_11">株式会社メイテック</h2>
+<p><strong>在籍期間</strong>: 2015年2月 ～ 2018年4月
+<strong>職種</strong>: 小型無線機器開発エンジニア</p>
+<p><strong>業務内容</strong>: 小型無線機器の設計・開発</p>
+<p><strong>退社理由</strong>: キャリアアップに限界を感じたため</p>
+<h3 id="_12">保有スキル</h3>
+<h3 id="_13">プロジェクト経験</h3>
+<h4 id="_14">壁面設置表示機の開発</h4>
+<p><strong>期間</strong>: 2015年3月 ～ 2015年4月
+<strong>役割</strong>: プロジェクトメンバー
+<strong>チーム規模</strong>: 2名</p>
+<p><strong>主な担当業務</strong>:
+- 詳細設計
+- FW設計
+- 回路設計</p>
+<p><strong>プロジェクト成果</strong>:
+- 短納期プロジェクトの成功: 展示会への無事出展と好評を得る。
+- プロジェクトの持続性: 出展を基に、関連するプロジェクトが継続中。</p>
+<hr />
+<h4 id="_15">小型ワイヤレスセンサー機器の開発・設計</h4>
+<p><strong>期間</strong>: 2015年4月 ～ 2018年4月
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 5名</p>
+<p><strong>主な担当業務</strong>:
+- 仕様設計
+- 詳細設計
+- FW設計
+- 回路設計
+- 部門間折衝
+- EMSハンドリング
+- 工程設計・立ち上げ</p>
+<p><strong>プロジェクト成果</strong>:
+- リーダーシップ: 幅広い知識を活かし、プロジェクトリーダーを務める。
+- チーム管理: メンバー間のフォロー、アクションアイテム管理、スケジューリングに成功。
+- 量産移行: 開発インフラの同時構築と開発進行で、量産移行段階への調整中。</p>
+<hr />
+<h4 id="fw">FW開発環境の構築</h4>
+<p><strong>期間</strong>: 2016年4月 ～ 2016年7月
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 1名</p>
+<p><strong>主な担当業務</strong>:
+- 企画提案
+- 仕様設計
+- 詳細設計
+- FW設計</p>
+<p><strong>プロジェクト成果</strong>:
+- 効率化の実現: FW開発のファイル管理やフォルダ構成の問題解決。
+- 高品質化: ハードウェアレイヤのラップとリユーザブルクラス作成環境、テストコード環境の構築。</p>
+<hr />
+<h4 id="_16">インフラ用無線機器の開発</h4>
+<p><strong>期間</strong>: 2017年4月 ～ 2018年4月
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 4名</p>
+<p><strong>主な担当業務</strong>:
+- 仕様設計
+- 詳細設計
+- FW設計
+- 企業間折衝</p>
+<p><strong>プロジェクト成果</strong>:
+- プロジェクトの案件確保: 公募によるプロジェクト獲得と実運用に向けた課題抽出、製品製作。
+- 協力関係の構築: 関わる企業が多い中での責任範囲明確化と製品完成度の認識合わせに成功。
+- 現実の学習: 実際のフィールド試験を通じてIoTインフラの現状理解。</p>
+<hr />
+<h2 id="_17">オムロンソフトウェア株式会社</h2>
+<p><strong>在籍期間</strong>: 2018年5月 ～ 在職中
+<strong>職種</strong>: IoT・クラウド・生成AIエンジニア</p>
+<p><strong>業務内容</strong>: クラウドを基盤としたIoT・生成AIシステムの設計・構築</p>
+<p><strong>退社理由</strong>: 身に着けたスキルをより活かせる機会を得たいため</p>
+<h3 id="_18">保有スキル</h3>
+<h3 id="_19">プロジェクト経験</h3>
+<h4 id="etl">産業機器向けETLの開発</h4>
+<p><strong>期間</strong>: 2018年5月 ～ 2021年3月
+<strong>役割</strong>: プロジェクトメンバー
+<strong>チーム規模</strong>: 5名</p>
+<p><strong>主な担当業務</strong>:
+- 詳細設計・結合テスト
+- 実装・単体テスト
+- システムテスト</p>
+<p><strong>プロジェクト成果</strong>:
+- ITとOTの連携によるETL Gatewayソフトウェア開発に従事
+- Vertxフレームワークを使用した疎結合な実装
+- ユーザカスタマイズ層を容易にするSDKの提供
+- GUIを介したETLアプリの開発
+- プロジェクトリーダーとして商品化チームへの移管まで担当</p>
+<hr />
+<h4 id="_20">地域環境監視クラウドシステムの開発</h4>
+<p><strong>期間</strong>: 2019年8月 ～ 2019年11月
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 2名（外注3名）</p>
+<p><strong>主な担当業務</strong>:
+- 仕様設計・システムテスト</p>
+<p><strong>プロジェクト成果</strong>:
+- IoTによる環境データ取得から監視WebUIアプリの開発
+- サーバレスアーキテクチャを採用したクラウド開発
+- 外注指示とプロジェクト管理</p>
+<hr />
+<h4 id="5g">ローカル5G性能評価</h4>
+<p><strong>期間</strong>: 2019年8月 ～ 現在
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 2名</p>
+<p><strong>主な担当業務</strong>:
+- 仕様設計・システムテスト
+- 詳細設計・結合テスト
+- 実装・単体テスト</p>
+<p><strong>プロジェクト成果</strong>:
+- ローカル5Gの工場現場実導入時性能評価に参画
+- 電波強度、通信帯域、応答速度等の測定データ取得システムの構築
+- 取得データの分析、解析、考察および社内論文への貢献</p>
+<hr />
+<h4 id="webhmi">WebHMIの開発</h4>
+<p><strong>期間</strong>: 2020年5月 ～ 2022年3月
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 2名</p>
+<p><strong>主な担当業務</strong>:
+- 仕様設計・システムテスト
+- 詳細設計・結合テスト
+- 実装・単体テスト</p>
+<p><strong>プロジェクト成果</strong>:
+- Webリモートアクセス可能なHMIのPoC開発に参画
+- 軽量・高速・シンプルなWeb技術の選定と採用
+- REST APIアクセス可能なAPIサーバの構築とリアルタイム可視化の実現</p>
+<hr />
+<h4 id="iac">全社向けクラウドIaC標準テンプレートの開発</h4>
+<p><strong>期間</strong>: 2021年9月 ～ 現在
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 5名</p>
+<p><strong>主な担当業務</strong>:
+- 企画
+- 仕様設計・システムテスト
+- 詳細設計・結合テスト
+- 実装・単体テスト</p>
+<p><strong>プロジェクト成果</strong>:
+- IaCを活用した社内ルール、セキュリティルール準拠のテンプレート開発
+- 全社クラウド開発の効率化と高品質化</p>
+<hr />
+<h4 id="_21">全社複数アカウント横断ガバナンスシステムの構築</h4>
+<p><strong>期間</strong>: 2022年6月 ～ 現在
+<strong>役割</strong>: プロジェクトメンバー
+<strong>チーム規模</strong>: 8名</p>
+<p><strong>主な担当業務</strong>:
+- 仕様設計・システムテスト
+- 詳細設計・結合テスト
+- 実装・単体テスト</p>
+<p><strong>プロジェクト成果</strong>:
+- クラウドアカウントの横断的管理によるコスト最適化
+- 共通の社内ルール、セキュリティルールのガバナンスによるシステムの実現</p>
+<hr />
+<h4 id="_22">外部委託業者との共同開発環境の構築</h4>
+<p><strong>期間</strong>: 2022年9月 ～ 現在
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 5名</p>
+<p><strong>主な担当業務</strong>:
+- 仕様設計・システムテスト
+- 詳細設計・結合テスト
+- 実装・単体テスト</p>
+<p><strong>プロジェクト成果</strong>:
+- 外部委託業者と安全に共同開発するためのネットワークと開発環境の構築
+- 高セキュリティなネットワーク構築と自動検証システムの実装</p>
+<hr />
+<h4 id="_23">オンプレ開発環境のクラウド移行</h4>
+<p><strong>期間</strong>: 2023年4月 ～ 現在
+<strong>役割</strong>: プロジェクトリーダー
+<strong>チーム規模</strong>: 2名</p>
+<p><strong>主な担当業務</strong>:
+- Gitlabのクラウド化とオートスケーリング可能なCI/CD環境の構築
+- オンプレとクラウドを組み合わせたハイブリッド環境の構築</p>
+<p><strong>プロジェクト成果</strong>:
+- 開発、運用コストを年間20百万円削減
+- 開発環境のスケーラビリティ向上による需要対効果の向上</p>
+<hr />
+<h4 id="aipocweb">生成AIを用いたPoC用のWebアプリ、クラウドインフラの構築</h4>
+<p><strong>期間</strong>: 2023年4月 ～ 現在
+<strong>役割</strong>: プロダクトマネージャー
+<strong>チーム規模</strong>: 12名</p>
+<p><strong>主な担当業務</strong>:
+- プロジェクトの全体計画立案
+- 市場調査と戦略立案
+- 仕様設計と要件定義
+- クラウドインフラのサーバレスアーキテクチャ構想・設計
+- フロントエンドとバックエンドの開発指導
+- AIモデルの技術選定とマルチエンジン化構想の立案と指導
+- 社内エバンジェリストメンバの育成とマネジメント
+- スクラムマスターとしてのプロジェクト進行管理
+- リスク管理と品質保証、品質管理チームとの折衝
+- ステークホルダーへの定期報告
+- 開発チームメンバーの育成とマネジメント
+- プロジェクトの成果評価とフィードバックの統合</p>
+<p><strong>プロジェクト成果</strong>:
+- オムロングループ全体の生成AI活用推進プロジェクトAIZAQでの採用と推進
+- 生成AIを用いたDXソリューションコンサルティングにより10件の実例を創出
+- 生成AIを用いた新規商品の企画および展示会での展示</p>
+<hr />
+<h2 id="_24">特記事項</h2>
+<p>本職務経歴書は、YAML形式のデータから自動生成されています。
+最新の情報については、GitHub Pages で公開されている Web版をご確認ください。</p>
+<p><strong>生成システム</strong>: resume-system-v2
+<strong>データバージョン</strong>: 2.0</p>
     </div>
-
+    <footer class="footer-info">
+        <p>本職務経歴書は自動生成システム (Resume Management System v2.0) により作成されています</p>
+        <p>最終更新: <span id="update-date"></span></p>
+    </footer>
     <script>
-        // Print functionality
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-                window.print();
-            }
-        });
+        // Set current date
+        document.getElementById('update-date').textContent = new Date().toLocaleDateString('ja-JP');
     </script>
 </body>
 </html>

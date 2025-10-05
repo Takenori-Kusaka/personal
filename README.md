@@ -28,6 +28,16 @@ YAML-based professional resume generation system for efficient career documentat
 - 🎨 **Professional Design**: Corporate-ready, high-quality output
 - 🚀 **CI/CD Integration**: Automated builds via GitHub Actions
 
+## 📚 ドキュメント
+
+詳細なドキュメントは`claudedocs/`ディレクトリにあります:
+
+- **[日々の運用ガイド](./claudedocs/DAILY_OPERATIONS_GUIDE.md)** - inputフォルダからの記事公開フロー、日常運用方法
+- **[プロジェクト全体構成](./claudedocs/PROJECT_OVERVIEW.md)** - システムアーキテクチャ、コンポーネント構成、技術スタック
+- **[技術アーキテクチャ詳細](./claudedocs/TECHNICAL_ARCHITECTURE.md)** - 各コンポーネントの実装詳細、API統合、最適化手法
+- **[API設定ガイド](./claudedocs/API_SETUP_GUIDE.md)** - Claude API、Perplexity API、GitHubの設定方法
+- **[自動化システムREADME](./automation/README.md)** - 自動化パイプラインの詳細
+
 ## 📁 プロジェクト構成
 
 ```

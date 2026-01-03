@@ -188,6 +188,12 @@ samples/
 !digital-garden/public/thumbnails/*.png
 
 # ===================================
+# Claude Code Documentation (Internal)
+# ===================================
+# Claude-generated analysis and reports (not part of project)
+claudedocs/
+
+# ===================================
 # Digital Garden Automation System
 # ===================================
 # Input files (users place files here, but they get processed and moved)

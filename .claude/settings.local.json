@@ -14,7 +14,13 @@
       "Bash($env:PYTHONIOENCODING='utf-8')",
       "Bash(npx playwright install:*)",
       "Bash(set PYTHONPATH=%CD%)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(awk:*)",
+      "Bash(grep:*)",
+      "SlashCommand(/sc:load)",
+      "SlashCommand(/sc:brainstorm)",
+      "WebSearch",
+      "SlashCommand(/sc:research)"
     ],
     "deny": [],
     "ask": []

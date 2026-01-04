@@ -100,23 +100,23 @@ rm automations_base64.txt
     language: ja
 ```
 
-## Helper Entity (要事前作成)
+## Helper Entity (作成済み)
 
 ```yaml
 input_boolean:
   - input_boolean.workday              # 平日フラグ
   - input_boolean.father_home          # 父在宅フラグ
   - input_boolean.night_cry_mode       # 夜泣きモード
-  # v6.0 新規（動的スケジュール用）
-  - input_boolean.evening_routine_started  # 夜ルーティン開始フラグ
-  - input_boolean.homework_completed       # 宿題完了
-  - input_boolean.dinner_completed         # 夕食完了
-  - input_boolean.bath_completed           # 入浴完了
-  - input_boolean.bedtime_prep_completed   # 就寝準備完了
+  # v6.0 新規（動的スケジュール用）- 実際のEntity ID
+  - input_boolean.ye_ruteinkai_shi            # 夜ルーティン開始フラグ
+  - input_boolean.su_ti_wan_liao              # 宿題完了
+  - input_boolean.xi_shi_wan_liao             # 夕食完了
+  - input_boolean.ru_yu_wan_liao              # 入浴完了
+  - input_boolean.jiu_qin_zhun_bei_wan_liao   # 就寝準備完了
 
 input_datetime:
-  - input_datetime.mother_wakeup_time      # 母起床時刻
-  - input_datetime.actual_arrival_time     # 実際の帰宅時刻（GPS検知で自動記録）
+  - input_datetime.mother_wakeup_time             # 母起床時刻
+  - input_datetime.shi_ji_nogui_zhai_shi_guo      # 実際の帰宅時刻（GPS検知で自動記録）
 ```
 
 ## 夜フェーズ動的スケジュール（v6.0）

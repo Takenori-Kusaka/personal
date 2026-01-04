@@ -1,6 +1,12 @@
 # 自衛隊式スマートホーム規律システム
 # Home Assistant Automations
-# Version: 6.0 - 動的スケジュール対応版
+# Version: 6.1 - 朝スケジュール改訂版
+#
+# 変更点 (v6.1):
+# - 朝スケジュールを10分前倒し（父05:40起床、娘05:50起床）
+# - ラジオ体操（06:12）を追加（TTS + YouTube再生）
+# - 登園準備を06:45に前倒し（トイレ・着替え時間確保）
+# - 06:20/06:25の重複通知を削除
 #
 # 変更点 (v6.0):
 # - 夜フェーズを固定時刻から「帰宅時刻基準」の動的スケジュールに変更
@@ -46,13 +52,13 @@
 # 朝フェーズ
 # =============================================================================
 
-# 父・起床（05:50）
+# 父・起床（05:40）
 - id: father_wakeup
   alias: "父・起床"
   description: "父の起床時刻"
   trigger:
     - platform: time
-      at: "05:50:00"
+      at: "05:40:00"
   condition:
     - condition: state
       entity_id: input_boolean.workday
@@ -73,13 +79,13 @@
         message: "おはようございます。起床時刻です。"
         language: ja
 
-# 娘・起床（06:00）- 強制
+# 娘・起床（05:50）- 強制
 - id: daughter_wakeup
   alias: "娘・起床"
   description: "娘の起床時刻（強制）"
   trigger:
     - platform: time
-      at: "06:00:00"
+      at: "05:50:00"
   action:
     - service: light.turn_on
       target:
@@ -93,12 +99,12 @@
         message: "おはようございます。起床時刻です。着替えとベッドメイクを始めてください。"
         language: ja
 
-# 父・朝食準備開始（06:00）
+# 父・朝食準備開始（05:50）
 - id: father_breakfast_prep
   alias: "父・朝食準備開始"
   trigger:
     - platform: time
-      at: "06:00:00"
+      at: "05:50:00"
   action:
     - service: tts.speak
       target:
@@ -108,12 +114,12 @@
         message: "朝食準備を始めてください。"
         language: ja
 
-# 娘・着替え確認（06:05）
+# 娘・着替え確認（05:55）
 - id: daughter_clothes_check
   alias: "娘・着替え確認"
   trigger:
     - platform: time
-      at: "06:05:00"
+      at: "05:55:00"
   action:
     - service: tts.speak
       target:
@@ -123,12 +129,12 @@
         message: "着替えは終わりましたか？次はベッドメイクです。"
         language: ja
 
-# 娘・洗面指示（06:10）
+# 娘・洗面指示（06:00）
 - id: daughter_wash_instruction
   alias: "娘・洗面指示"
   trigger:
     - platform: time
-      at: "06:10:00"
+      at: "06:00:00"
   action:
     - service: tts.speak
       target:
@@ -147,9 +153,35 @@
         message: "洗面台に移動してください。顔を洗って歯を磨きましょう。"
         language: ja
 
-# 娘・リビング移動（06:20）
-- id: daughter_living_move
-  alias: "娘・リビング移動"
+# ラジオ体操（06:12）- 朝のルーティンに追加
+- id: radio_taiso
+  alias: "ラジオ体操"
+  description: "朝のラジオ体操第一（TTS + 音楽再生）"
+  trigger:
+    - platform: time
+      at: "06:12:00"
+  action:
+    # 1. TTS告知
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "ラジオ体操の時間です。リビングに集まってください。"
+        language: ja
+    - delay:
+        seconds: 8
+    # 2. ラジオ体操第一の音楽を再生（YouTube）
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.shu_zhai_hetuto_hou_you
+      data:
+        media_content_id: "https://www.youtube.com/watch?v=feSVtC1BSeQ"
+        media_content_type: video/youtube
+
+# 朝食点呼（06:20）
+- id: breakfast_call
+  alias: "朝食点呼"
   trigger:
     - platform: time
       at: "06:20:00"
@@ -159,54 +191,15 @@
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "リビングに移動してください。あと10分で朝食です。"
-        language: ja
-    - delay:
-        seconds: 3
-    - service: tts.speak
-      target:
-        entity_id: tts.google_translate_en_com
-      data:
-        media_player_entity_id: media_player.shu_zhai_nohea
-        message: "リビングに移動してください。あと10分で朝食です。"
-        language: ja
-
-# 朝食5分前（06:25）- リビングスピーカーのみ（重複防止）
-- id: breakfast_5min_before
-  alias: "朝食5分前"
-  trigger:
-    - platform: time
-      at: "06:25:00"
-  action:
-    - service: tts.speak
-      target:
-        entity_id: tts.google_translate_en_com
-      data:
-        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "朝食5分前です。リビングに集合してください。"
-        language: ja
-
-# 朝食点呼（06:30）
-- id: breakfast_call
-  alias: "朝食点呼"
-  trigger:
-    - platform: time
-      at: "06:30:00"
-  action:
-    - service: tts.speak
-      target:
-        entity_id: tts.google_translate_en_com
-      data:
-        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
         message: "朝食の時間です。いただきます。"
         language: ja
 
-# 朝のかくにんタイム（06:32）- 平日版
+# 朝のかくにんタイム（06:22）- 平日版
 - id: morning_checkin_weekday
   alias: "朝のかくにんタイム（平日）"
   trigger:
     - platform: time
-      at: "06:32:00"
+      at: "06:22:00"
   condition:
     - condition: time
       weekday:
@@ -225,12 +218,12 @@
         message: "朝のかくにんタイムです。今日の気分と、やりたいことを教えてください。おとうさんからどうぞ。"
         language: ja
 
-# 朝のかくにんタイム（06:32）- 日曜版（週礼）
+# 朝のかくにんタイム（06:22）- 日曜版（週礼）
 - id: morning_checkin_sunday
   alias: "朝のかくにんタイム（日曜）"
   trigger:
     - platform: time
-      at: "06:32:00"
+      at: "06:22:00"
   condition:
     - condition: time
       weekday:
@@ -244,19 +237,19 @@
         message: "日曜の朝のかくにんタイムです。今週たのしかったことと、来週のたのしみを教えてください。おとうさんからどうぞ。"
         language: ja
 
-# 登園準備開始（07:00）
+# 登園準備開始（06:45）- 15分前倒しでトイレ・着替え時間確保
 - id: departure_prep_start
   alias: "登園準備開始"
   trigger:
     - platform: time
-      at: "07:00:00"
+      at: "06:45:00"
   action:
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "ごちそうさまでした。登園の準備を始めてください。"
+        message: "ごちそうさまでした。トイレと着替えをしてください。登園の準備を始めましょう。"
         language: ja
 
 # 出発5分前（07:10）
@@ -886,7 +879,7 @@
   description: "毎月第3水曜日の朝にリマインド"
   trigger:
     - platform: time
-      at: "06:00:00"
+      at: "05:50:00"
   condition:
     - condition: template
       value_template: "{{ now().weekday() == 2 and 15 <= now().day <= 21 }}"
@@ -964,10 +957,10 @@
 
 - id: circulator_morning_on
   alias: "サーキュレーター・朝ON"
-  description: "朝6時にサーキュレーター起動"
+  description: "朝5:50にサーキュレーター起動"
   trigger:
     - platform: time
-      at: "06:00:00"
+      at: "05:50:00"
   condition:
     - condition: state
       entity_id: person.ri_xia
@@ -1063,13 +1056,13 @@
 # =============================================================================
 # 音量レベル: 朝(0.7) → 夕方(0.5) → 夜(0.3)
 
-# 朝・音量UP（05:50）- 起床時刻に合わせて大きめ
+# 朝・音量UP（05:40）- 起床時刻に合わせて大きめ
 - id: speaker_volume_morning
   alias: "スピーカー音量・朝"
   description: "朝は音量を大きく（70%）"
   trigger:
     - platform: time
-      at: "05:50:00"
+      at: "05:40:00"
   action:
     - service: media_player.volume_set
       target:

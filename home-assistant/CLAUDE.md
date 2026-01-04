@@ -73,6 +73,16 @@ rm automations_base64.txt
 | 照度 | `sensor.illuminance_sensor_*` |
 | 人感 | `sensor.movement_sensor_*` (最終検知時刻) |
 
+### エアコン (Nature Remo経由)
+| 場所 | Entity ID |
+|------|-----------|
+| 寝室 | `climate.qin_shi_noeakon_remo` |
+| リビング | `climate.rihinkunoeakon_rihinku` |
+| 書斎 | `climate.shu_zhai_noeakon_shu_zhai` |
+| 子供部屋 | `climate.zi_gong_bu_wu_noeakon_lang_xia` |
+
+**注意**: 21時に全エアコン自動OFF（就寝時節電）
+
 ### その他デバイス
 | デバイス | Entity ID | 備考 |
 |----------|-----------|------|

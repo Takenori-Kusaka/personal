@@ -33,13 +33,13 @@
 #   サーキュレーター: button.send_signal_sakiyureta (全部屋一括)
 #   GPS/Person: person.ri_xia (日下)
 # -----------------------------------------------------------------------------
-# Helper Entity (要作成):
-#   input_datetime.actual_arrival_time - 実際の帰宅時刻
-#   input_boolean.evening_routine_started - 夜ルーティン開始フラグ
-#   input_boolean.homework_completed - 宿題完了フラグ
-#   input_boolean.dinner_completed - 夕食完了フラグ
-#   input_boolean.bath_completed - 入浴完了フラグ
-#   input_boolean.bedtime_prep_completed - 就寝準備完了フラグ
+# Helper Entity (作成済み):
+#   input_datetime.shi_ji_nogui_zhai_shi_guo - 実際の帰宅時刻
+#   input_boolean.ye_ruteinkai_shi - 夜ルーティン開始フラグ
+#   input_boolean.su_ti_wan_liao - 宿題完了フラグ
+#   input_boolean.xi_shi_wan_liao - 夕食完了フラグ
+#   input_boolean.ru_yu_wan_liao - 入浴完了フラグ
+#   input_boolean.jiu_qin_zhun_bei_wan_liao - 就寝準備完了フラグ
 # =============================================================================
 
 # =============================================================================
@@ -360,11 +360,11 @@
     - service: input_boolean.turn_off
       target:
         entity_id:
-          - input_boolean.evening_routine_started
-          - input_boolean.homework_completed
-          - input_boolean.dinner_completed
-          - input_boolean.bath_completed
-          - input_boolean.bedtime_prep_completed
+          - input_boolean.ye_ruteinkai_shi
+          - input_boolean.su_ti_wan_liao
+          - input_boolean.xi_shi_wan_liao
+          - input_boolean.ru_yu_wan_liao
+          - input_boolean.jiu_qin_zhun_bei_wan_liao
 
 # -----------------------------------------------------------------------------
 # GPS帰宅検知 → 夜ルーティン開始（動的）
@@ -384,19 +384,19 @@
       before: "21:00:00"
     # まだ夜ルーティンが開始していない場合のみ
     - condition: state
-      entity_id: input_boolean.evening_routine_started
+      entity_id: input_boolean.ye_ruteinkai_shi
       state: "off"
   action:
     # 1. 帰宅時刻を記録
     - service: input_datetime.set_datetime
       target:
-        entity_id: input_datetime.actual_arrival_time
+        entity_id: input_datetime.shi_ji_nogui_zhai_shi_guo
       data:
         time: "{{ now().strftime('%H:%M:%S') }}"
     # 2. 夜ルーティン開始フラグをON
     - service: input_boolean.turn_on
       target:
-        entity_id: input_boolean.evening_routine_started
+        entity_id: input_boolean.ye_ruteinkai_shi
     # 3. 日没後なら照明ON
     - condition: sun
       after: sunset
@@ -423,8 +423,8 @@
   trigger:
     - platform: template
       value_template: >
-        {% set arrival = states('input_datetime.actual_arrival_time') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.evening_routine_started', 'on') %}
+        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
+        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
           {% set arrival_time = today_at(arrival) %}
           {% set target_time = arrival_time + timedelta(minutes=5) %}
           {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
@@ -449,8 +449,8 @@
   trigger:
     - platform: template
       value_template: >
-        {% set arrival = states('input_datetime.actual_arrival_time') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.evening_routine_started', 'on') %}
+        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
+        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
           {% set arrival_time = today_at(arrival) %}
           {% set target_time = arrival_time + timedelta(minutes=15) %}
           {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
@@ -459,7 +459,7 @@
         {% endif %}
   condition:
     - condition: state
-      entity_id: input_boolean.homework_completed
+      entity_id: input_boolean.su_ti_wan_liao
       state: "off"
   action:
     - service: tts.speak
@@ -488,8 +488,8 @@
   trigger:
     - platform: template
       value_template: >
-        {% set arrival = states('input_datetime.actual_arrival_time') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.evening_routine_started', 'on') %}
+        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
+        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
           {% set arrival_time = today_at(arrival) %}
           {% set target_time = arrival_time + timedelta(minutes=25) %}
           {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
@@ -498,13 +498,13 @@
         {% endif %}
   condition:
     - condition: state
-      entity_id: input_boolean.dinner_completed
+      entity_id: input_boolean.xi_shi_wan_liao
       state: "off"
   action:
     # 宿題完了をマーク
     - service: input_boolean.turn_on
       target:
-        entity_id: input_boolean.homework_completed
+        entity_id: input_boolean.su_ti_wan_liao
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
@@ -522,8 +522,8 @@
   trigger:
     - platform: template
       value_template: >
-        {% set arrival = states('input_datetime.actual_arrival_time') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.evening_routine_started', 'on') %}
+        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
+        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
           {% set arrival_time = today_at(arrival) %}
           {% set target_time = arrival_time + timedelta(minutes=55) %}
           {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
@@ -532,13 +532,13 @@
         {% endif %}
   condition:
     - condition: state
-      entity_id: input_boolean.bath_completed
+      entity_id: input_boolean.ru_yu_wan_liao
       state: "off"
   action:
     # 夕食完了をマーク
     - service: input_boolean.turn_on
       target:
-        entity_id: input_boolean.dinner_completed
+        entity_id: input_boolean.xi_shi_wan_liao
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
@@ -556,8 +556,8 @@
   trigger:
     - platform: template
       value_template: >
-        {% set arrival = states('input_datetime.actual_arrival_time') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.evening_routine_started', 'on') %}
+        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
+        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
           {% set arrival_time = today_at(arrival) %}
           {% set target_time = arrival_time + timedelta(minutes=75) %}
           {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
@@ -566,13 +566,13 @@
         {% endif %}
   condition:
     - condition: state
-      entity_id: input_boolean.bath_completed
+      entity_id: input_boolean.ru_yu_wan_liao
       state: "off"
   action:
     # 入浴完了をマーク
     - service: input_boolean.turn_on
       target:
-        entity_id: input_boolean.bath_completed
+        entity_id: input_boolean.ru_yu_wan_liao
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
@@ -590,8 +590,8 @@
   trigger:
     - platform: template
       value_template: >
-        {% set arrival = states('input_datetime.actual_arrival_time') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.evening_routine_started', 'on') %}
+        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
+        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
           {% set arrival_time = today_at(arrival) %}
           {% set target_time = arrival_time + timedelta(minutes=90) %}
           {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
@@ -600,7 +600,7 @@
         {% endif %}
   condition:
     - condition: state
-      entity_id: input_boolean.bedtime_prep_completed
+      entity_id: input_boolean.jiu_qin_zhun_bei_wan_liao
       state: "off"
   action:
     - service: tts.speak
@@ -633,8 +633,8 @@
   trigger:
     - platform: template
       value_template: >
-        {% set arrival = states('input_datetime.actual_arrival_time') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.evening_routine_started', 'on') %}
+        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
+        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
           {% set arrival_time = today_at(arrival) %}
           {% set target_time = arrival_time + timedelta(minutes=100) %}
           {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
@@ -645,7 +645,7 @@
     # 就寝準備完了をマーク
     - service: input_boolean.turn_on
       target:
-        entity_id: input_boolean.bedtime_prep_completed
+        entity_id: input_boolean.jiu_qin_zhun_bei_wan_liao
     # 子供部屋消灯
     - service: light.turn_off
       target:
@@ -667,8 +667,8 @@
   trigger:
     - platform: template
       value_template: >
-        {% set arrival = states('input_datetime.actual_arrival_time') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.evening_routine_started', 'on') %}
+        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
+        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
           {% set arrival_time = today_at(arrival) %}
           {% set target_time = arrival_time + timedelta(minutes=100) %}
           {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}

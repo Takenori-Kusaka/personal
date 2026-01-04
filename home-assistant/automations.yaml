@@ -1119,3 +1119,23 @@
           - media_player.shu_zhai_hetuto_hou_you
       data:
         volume_level: 0.3
+
+# =============================================================================
+# エアコン自動OFF（就寝時）
+# =============================================================================
+
+# 21時・エアコン全OFF（就寝準備）
+- id: aircon_off_bedtime
+  alias: "エアコン・就寝時OFF"
+  description: "21時に全エアコンをOFF（就寝中の節電）"
+  trigger:
+    - platform: time
+      at: "21:00:00"
+  action:
+    - service: climate.turn_off
+      target:
+        entity_id:
+          - climate.qin_shi_noeakon_remo
+          - climate.rihinkunoeakon_rihinku
+          - climate.shu_zhai_noeakon_shu_zhai
+          - climate.zi_gong_bu_wu_noeakon_lang_xia

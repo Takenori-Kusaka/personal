@@ -923,10 +923,10 @@
 # GPS/プレゼンス連動
 # =============================================================================
 
-# 外出検知 → 全照明OFF + サーキュレーターOFF
+# 外出検知 → 書斎のみOFF（他の家族が在宅の可能性があるため）
 - id: gps_leaving_home
   alias: "GPS・外出検知"
-  description: "外出5分後に全照明とサーキュレーターをOFF"
+  description: "外出5分後に書斎の照明をOFF"
   trigger:
     - platform: state
       entity_id: person.ri_xia
@@ -935,26 +935,10 @@
       for:
         minutes: 5
   action:
-    # 全照明OFF
+    # 書斎のみOFF（他の家族に影響しない）
     - service: light.turn_off
       target:
-        entity_id:
-          - light.shu_zhai
-          - light.rihinku
-          - light.zi_gong_bu_wu
-          - light.qin_shi
-          - light.lang_xia
-    # サーキュレーターOFF（トグル動作のため現在ONなら実行）
-    - service: button.press
-      target:
-        entity_id: button.send_signal_sakiyureta
-    - service: tts.speak
-      target:
-        entity_id: tts.google_translate_en_com
-      data:
-        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "外出を検知しました。照明とサーキュレーターをOFFにしました。"
-        language: ja
+        entity_id: light.shu_zhai
 
 # 帰宅検知 → 照明ON（日没後のみ）
 - id: gps_arriving_home

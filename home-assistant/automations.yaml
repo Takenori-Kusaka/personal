@@ -1,19 +1,31 @@
 # 自衛隊式スマートホーム規律システム
 # Home Assistant Automations
-# Version: 4.6 - 廊下常夜灯対応版
+# Version: 5.0 - センサー連動・GPS対応版
 
 # =============================================================================
 # デバイス設定
+# -----------------------------------------------------------------------------
 # スピーカー:
 #   書斎: media_player.shu_zhai_nohea (父専用 + 娘の部屋通知代替)
 #   リビング: media_player.shu_zhai_hetuto_hou_you (リビング/洗面/玄関エリア)
 #   子供部屋: [未導入] media_player.kodomo_heya (導入後に有効化)
+# -----------------------------------------------------------------------------
 # 照明 (すべてlight.turn_on/turn_off対応):
 #   書斎: light.shu_zhai
 #   子供部屋: light.zi_gong_bu_wu
 #   リビング: light.rihinku
 #   寝室: light.qin_shi
 #   廊下/玄関: light.lang_xia
+# -----------------------------------------------------------------------------
+# Nature Remo センサー:
+#   温度: sensor.temperature_sensor_rihinku, _shu_zhai, _lang_xia, _remo
+#   湿度: sensor.humidity_sensor_rihinku, _shu_zhai, _lang_xia, _remo
+#   照度: sensor.illuminance_sensor_rihinku, _shu_zhai, _lang_xia, _remo
+#   人感: sensor.movement_sensor_rihinku, _shu_zhai, _lang_xia, _remo (最終検知時刻)
+# -----------------------------------------------------------------------------
+# その他:
+#   サーキュレーター: button.send_signal_sakiyureta (全部屋一括)
+#   GPS/Person: person.ri_xia (日下)
 # =============================================================================
 
 # =============================================================================
@@ -905,4 +917,179 @@
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
         message: "今日は発表会です。がんばってね！衣装と持ち物を忘れずに。"
+        language: ja
+
+# =============================================================================
+# GPS/プレゼンス連動
+# =============================================================================
+
+# 外出検知 → 全照明OFF + サーキュレーターOFF
+- id: gps_leaving_home
+  alias: "GPS・外出検知"
+  description: "外出5分後に全照明とサーキュレーターをOFF"
+  trigger:
+    - platform: state
+      entity_id: person.ri_xia
+      from: "home"
+      to: "not_home"
+      for:
+        minutes: 5
+  action:
+    # 全照明OFF
+    - service: light.turn_off
+      target:
+        entity_id:
+          - light.shu_zhai
+          - light.rihinku
+          - light.zi_gong_bu_wu
+          - light.qin_shi
+          - light.lang_xia
+    # サーキュレーターOFF（トグル動作のため現在ONなら実行）
+    - service: button.press
+      target:
+        entity_id: button.send_signal_sakiyureta
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "外出を検知しました。照明とサーキュレーターをOFFにしました。"
+        language: ja
+
+# 帰宅検知 → 照明ON（日没後のみ）
+- id: gps_arriving_home
+  alias: "GPS・帰宅検知"
+  description: "帰宅時に照明ON（日没後のみ）"
+  trigger:
+    - platform: state
+      entity_id: person.ri_xia
+      from: "not_home"
+      to: "home"
+  condition:
+    - condition: sun
+      after: sunset
+  action:
+    - service: light.turn_on
+      target:
+        entity_id:
+          - light.rihinku
+          - light.lang_xia
+
+# =============================================================================
+# サーキュレーター時間制御
+# =============================================================================
+
+# 朝・サーキュレーターON（06:00）
+- id: circulator_morning_on
+  alias: "サーキュレーター・朝ON"
+  description: "朝6時にサーキュレーター起動（空気循環）"
+  trigger:
+    - platform: time
+      at: "06:00:00"
+  condition:
+    # 在宅時のみ
+    - condition: state
+      entity_id: person.ri_xia
+      state: "home"
+  action:
+    - service: button.press
+      target:
+        entity_id: button.send_signal_sakiyureta
+
+# 夜・サーキュレーターOFF（20:45）
+- id: circulator_night_off
+  alias: "サーキュレーター・夜OFF"
+  description: "就寝準備前にサーキュレーター停止"
+  trigger:
+    - platform: time
+      at: "20:45:00"
+  action:
+    - service: button.press
+      target:
+        entity_id: button.send_signal_sakiyureta
+
+# =============================================================================
+# 温度アラート（TTS通知）
+# =============================================================================
+
+# リビング高温アラート（28℃超）
+- id: temperature_alert_living_high
+  alias: "温度アラート・リビング高温"
+  description: "リビングが28℃を超えたら音声通知"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.temperature_sensor_rihinku
+      above: 28
+      for:
+        minutes: 10
+  condition:
+    # 在宅時のみ
+    - condition: state
+      entity_id: person.ri_xia
+      state: "home"
+    # 日中のみ（06:00-21:00）
+    - condition: time
+      after: "06:00:00"
+      before: "21:00:00"
+  action:
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "リビングの室温が{{ states('sensor.temperature_sensor_rihinku') }}度です。エアコンの使用を検討してください。"
+        language: ja
+
+# 書斎高温アラート（28℃超）
+- id: temperature_alert_study_high
+  alias: "温度アラート・書斎高温"
+  description: "書斎が28℃を超えたら音声通知"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.temperature_sensor_shu_zhai
+      above: 28
+      for:
+        minutes: 10
+  condition:
+    # 在宅時のみ
+    - condition: state
+      entity_id: person.ri_xia
+      state: "home"
+    # 日中のみ（06:00-21:00）
+    - condition: time
+      after: "06:00:00"
+      before: "21:00:00"
+  action:
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_nohea
+        message: "書斎の室温が{{ states('sensor.temperature_sensor_shu_zhai') }}度です。エアコンの使用を検討してください。"
+        language: ja
+
+# リビング低温アラート（15℃以下）
+- id: temperature_alert_living_low
+  alias: "温度アラート・リビング低温"
+  description: "リビングが15℃以下になったら音声通知"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.temperature_sensor_rihinku
+      below: 15
+      for:
+        minutes: 10
+  condition:
+    - condition: state
+      entity_id: person.ri_xia
+      state: "home"
+    - condition: time
+      after: "06:00:00"
+      before: "21:00:00"
+  action:
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "リビングの室温が{{ states('sensor.temperature_sensor_rihinku') }}度です。暖房の使用を検討してください。"
         language: ja

@@ -1,0 +1,91 @@
+# =============================================================================
+# Helper Entities - 動的スケジュール用
+# =============================================================================
+# Home Assistant の「設定」→「デバイスとサービス」→「ヘルパー」から
+# 以下のエンティティを手動で作成してください。
+# または configuration.yaml に以下を追加してください。
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# input_datetime（時刻記録用）
+# -----------------------------------------------------------------------------
+input_datetime:
+  # 実際の帰宅時刻（GPS検知時に自動記録）
+  actual_arrival_time:
+    name: 実際の帰宅時刻
+    has_date: false
+    has_time: true
+
+  # 母起床時刻（夜泣き対応用、既存）
+  mother_wakeup_time:
+    name: 母起床時刻
+    has_date: false
+    has_time: true
+
+# -----------------------------------------------------------------------------
+# input_boolean（状態フラグ用）
+# -----------------------------------------------------------------------------
+input_boolean:
+  # 既存のフラグ
+  workday:
+    name: 平日フラグ
+    icon: mdi:briefcase
+
+  father_home:
+    name: 父在宅フラグ
+    icon: mdi:home
+
+  night_cry_mode:
+    name: 夜泣きモード
+    icon: mdi:baby-carriage
+
+  # 新規: 夜ルーティン管理
+  evening_routine_started:
+    name: 夜ルーティン開始
+    icon: mdi:clock-start
+
+  # 新規: タスク完了フラグ
+  homework_completed:
+    name: 宿題完了
+    icon: mdi:pencil-box
+
+  dinner_completed:
+    name: 夕食完了
+    icon: mdi:silverware-fork-knife
+
+  bath_completed:
+    name: 入浴完了
+    icon: mdi:shower
+
+  bedtime_prep_completed:
+    name: 就寝準備完了
+    icon: mdi:bed
+
+# -----------------------------------------------------------------------------
+# Home Assistant UIでの作成手順
+# -----------------------------------------------------------------------------
+# 1. 「設定」→「デバイスとサービス」→「ヘルパー」
+# 2. 「+ ヘルパーを追加」
+# 3. 以下を作成:
+#
+#    【日時】
+#    - 名前: 実際の帰宅時刻
+#      エンティティID: input_datetime.actual_arrival_time
+#      日付: OFF, 時刻: ON
+#
+#    【トグル】
+#    - 名前: 夜ルーティン開始
+#      エンティティID: input_boolean.evening_routine_started
+#
+#    - 名前: 宿題完了
+#      エンティティID: input_boolean.homework_completed
+#
+#    - 名前: 夕食完了
+#      エンティティID: input_boolean.dinner_completed
+#
+#    - 名前: 入浴完了
+#      エンティティID: input_boolean.bath_completed
+#
+#    - 名前: 就寝準備完了
+#      エンティティID: input_boolean.bedtime_prep_completed
+# -----------------------------------------------------------------------------

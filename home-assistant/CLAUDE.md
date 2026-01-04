@@ -1,5 +1,7 @@
 # Home Assistant プロジェクト - Claude Code 作業メモ
 
+## 現在のバージョン: 6.0 (動的スケジュール対応版)
+
 ## サーバーアクセス情報
 
 | 項目 | 値 |
@@ -102,13 +104,35 @@ rm automations_base64.txt
 
 ```yaml
 input_boolean:
-  - input_boolean.workday          # 平日フラグ
-  - input_boolean.father_home      # 父在宅フラグ
-  - input_boolean.night_cry_mode   # 夜泣きモード
+  - input_boolean.workday              # 平日フラグ
+  - input_boolean.father_home          # 父在宅フラグ
+  - input_boolean.night_cry_mode       # 夜泣きモード
+  # v6.0 新規（動的スケジュール用）
+  - input_boolean.evening_routine_started  # 夜ルーティン開始フラグ
+  - input_boolean.homework_completed       # 宿題完了
+  - input_boolean.dinner_completed         # 夕食完了
+  - input_boolean.bath_completed           # 入浴完了
+  - input_boolean.bedtime_prep_completed   # 就寝準備完了
 
 input_datetime:
-  - input_datetime.mother_wakeup_time  # 母起床時刻
+  - input_datetime.mother_wakeup_time      # 母起床時刻
+  - input_datetime.actual_arrival_time     # 実際の帰宅時刻（GPS検知で自動記録）
 ```
+
+## 夜フェーズ動的スケジュール（v6.0）
+
+| オフセット | イベント |
+|------------|----------|
+| +0分 | GPS帰宅検知 → おかえりなさい + 時刻記録 |
+| +5分 | 帰宅後作業（手洗い等） |
+| +15分 | 宿題開始（10分間） |
+| +25分 | 夕食開始 |
+| +55分 | 入浴開始 |
+| +75分 | 歯磨き |
+| +90分 | 就寝準備（巡検）+ サーキュレーターOFF |
+| +100分 | 娘・就寝（強制消灯）+ 父・洗濯物干し |
+
+**完了フラグ**: 各タスクに `input_boolean.*_completed` があり、条件分岐でスキップ可能
 
 ## ゴミ収集日 (B3地区・梅美台6丁目)
 

@@ -1066,3 +1066,56 @@
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
         message: "リビングの室温が{{ states('sensor.temperature_sensor_rihinku') }}度です。暖房の使用を検討してください。"
         language: ja
+
+# =============================================================================
+# スピーカー音量制御
+# =============================================================================
+# 音量レベル: 朝(0.7) → 夕方(0.5) → 夜(0.3)
+
+# 朝・音量UP（05:50）- 起床時刻に合わせて大きめ
+- id: speaker_volume_morning
+  alias: "スピーカー音量・朝"
+  description: "朝は音量を大きく（70%）"
+  trigger:
+    - platform: time
+      at: "05:50:00"
+  action:
+    - service: media_player.volume_set
+      target:
+        entity_id:
+          - media_player.shu_zhai_nohea
+          - media_player.shu_zhai_hetuto_hou_you
+      data:
+        volume_level: 0.7
+
+# 夕方・音量NORMAL（17:00）- 帰宅前に通常に戻す
+- id: speaker_volume_evening
+  alias: "スピーカー音量・夕方"
+  description: "夕方は音量を普通に（50%）"
+  trigger:
+    - platform: time
+      at: "17:00:00"
+  action:
+    - service: media_player.volume_set
+      target:
+        entity_id:
+          - media_player.shu_zhai_nohea
+          - media_player.shu_zhai_hetuto_hou_you
+      data:
+        volume_level: 0.5
+
+# 夜・音量DOWN（21:00）- 娘就寝後は小さく
+- id: speaker_volume_night
+  alias: "スピーカー音量・夜"
+  description: "夜は音量を小さく（30%）"
+  trigger:
+    - platform: time
+      at: "21:00:00"
+  action:
+    - service: media_player.volume_set
+      target:
+        entity_id:
+          - media_player.shu_zhai_nohea
+          - media_player.shu_zhai_hetuto_hou_you
+      data:
+        volume_level: 0.3

@@ -18,9 +18,9 @@
 # デバイス設定
 # -----------------------------------------------------------------------------
 # スピーカー:
-#   書斎: media_player.shu_zhai_nohea (父専用 + 娘の部屋通知代替)
+#   書斎: media_player.shu_zhai_nohea (父専用)
 #   リビング: media_player.shu_zhai_hetuto_hou_you (リビング/洗面/玄関エリア)
-#   子供部屋: [未導入] media_player.kodomo_heya (導入後に有効化)
+#   子供部屋: media_player.zi_gong_bu_wu (娘用)
 # -----------------------------------------------------------------------------
 # 照明 (すべてlight.turn_on/turn_off対応):
 #   書斎: light.shu_zhai
@@ -90,12 +90,12 @@
     - service: light.turn_on
       target:
         entity_id: light.zi_gong_bu_wu
-    # 書斎スピーカー（子供部屋代替）
+    # 子供部屋スピーカー
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
-        media_player_entity_id: media_player.shu_zhai_nohea
+        media_player_entity_id: media_player.zi_gong_bu_wu
         message: "おはようございます。起床時刻です。着替えとベッドメイクを始めてください。"
         language: ja
 
@@ -125,7 +125,7 @@
       target:
         entity_id: tts.google_translate_en_com
       data:
-        media_player_entity_id: media_player.shu_zhai_nohea
+        media_player_entity_id: media_player.zi_gong_bu_wu
         message: "着替えは終わりましたか？次はベッドメイクです。"
         language: ja
 
@@ -136,6 +136,7 @@
     - platform: time
       at: "06:00:00"
   action:
+    # リビング（洗面所に近い）
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
@@ -145,11 +146,12 @@
         language: ja
     - delay:
         seconds: 3
+    # 子供部屋
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
-        media_player_entity_id: media_player.shu_zhai_nohea
+        media_player_entity_id: media_player.zi_gong_bu_wu
         message: "洗面台に移動してください。顔を洗って歯を磨きましょう。"
         language: ja
 
@@ -274,11 +276,12 @@
         language: ja
     - delay:
         seconds: 3
+    # 子供部屋
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
-        media_player_entity_id: media_player.shu_zhai_nohea
+        media_player_entity_id: media_player.zi_gong_bu_wu
         message: "出発5分前です。靴を履いて玄関で待機してください。"
         language: ja
 
@@ -503,11 +506,12 @@
         language: ja
     - delay:
         seconds: 3
+    # 子供部屋
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
-        media_player_entity_id: media_player.shu_zhai_nohea
+        media_player_entity_id: media_player.zi_gong_bu_wu
         message: "宿題の時間です。机に向かってお勉強しましょう。"
         language: ja
 
@@ -644,11 +648,12 @@
         language: ja
     - delay:
         seconds: 3
+    # 子供部屋
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
-        media_player_entity_id: media_player.shu_zhai_nohea
+        media_player_entity_id: media_player.zi_gong_bu_wu
         message: "巡検の時間です。明日の服と持ち物を見せてください。"
         language: ja
     # サーキュレーターOFF
@@ -682,11 +687,12 @@
     - service: light.turn_off
       target:
         entity_id: light.zi_gong_bu_wu
+    # 子供部屋スピーカーでおやすみ
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
-        media_player_entity_id: media_player.shu_zhai_nohea
+        media_player_entity_id: media_player.zi_gong_bu_wu
         message: "おやすみなさい。"
         language: ja
 
@@ -1117,6 +1123,7 @@
         entity_id:
           - media_player.shu_zhai_nohea
           - media_player.shu_zhai_hetuto_hou_you
+          - media_player.zi_gong_bu_wu
       data:
         volume_level: 0.7
 
@@ -1133,6 +1140,7 @@
         entity_id:
           - media_player.shu_zhai_nohea
           - media_player.shu_zhai_hetuto_hou_you
+          - media_player.zi_gong_bu_wu
       data:
         volume_level: 0.5
 
@@ -1149,6 +1157,7 @@
         entity_id:
           - media_player.shu_zhai_nohea
           - media_player.shu_zhai_hetuto_hou_you
+          - media_player.zi_gong_bu_wu
       data:
         volume_level: 0.3
 

@@ -156,7 +156,7 @@
 # ラジオ体操（06:12）- 朝のルーティンに追加
 - id: radio_taiso
   alias: "ラジオ体操"
-  description: "朝のラジオ体操第一（TTS + 音楽再生）"
+  description: "朝のラジオ体操第一（TTS告知 + LG TVでYouTube再生）"
   trigger:
     - platform: time
       at: "06:12:00"
@@ -167,14 +167,20 @@
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "ラジオ体操の時間です。リビングに集まってください。"
+        message: "ラジオ体操の時間です。テレビの前に集まってください。"
         language: ja
     - delay:
-        seconds: 8
-    # 2. ラジオ体操第一の音楽を再生（YouTube）
+        seconds: 5
+    # 2. LG TVの電源ON
+    - service: media_player.turn_on
+      target:
+        entity_id: media_player.lg_webos_tv_ur8000pjb
+    - delay:
+        seconds: 5
+    # 3. ラジオ体操第一をLG TVで再生（YouTube）
     - service: media_player.play_media
       target:
-        entity_id: media_player.shu_zhai_hetuto_hou_you
+        entity_id: media_player.lg_webos_tv_ur8000pjb
       data:
         media_content_id: "https://www.youtube.com/watch?v=RmjQNmxILMg"
         media_content_type: video/youtube

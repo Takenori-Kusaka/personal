@@ -399,6 +399,48 @@
         language: ja
 
 # -----------------------------------------------------------------------------
+# GPS帰宅検知フォールバック（19:00）
+# -----------------------------------------------------------------------------
+- id: evening_routine_fallback
+  alias: "夜ルーティン・フォールバック"
+  description: "19:00までに帰宅検知できなかった場合、19:00を帰宅時刻として開始"
+  trigger:
+    - platform: time
+      at: "19:00:00"
+  condition:
+    # まだ夜ルーティンが開始していない場合のみ
+    - condition: state
+      entity_id: input_boolean.ye_ruteinkai_shi
+      state: "off"
+  action:
+    # 1. 帰宅時刻を19:00に設定
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.shi_ji_nogui_zhai_shi_guo
+      data:
+        time: "19:00:00"
+    # 2. 夜ルーティン開始フラグをON
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.ye_ruteinkai_shi
+    # 3. 日没後なら照明ON
+    - condition: sun
+      after: sunset
+    - service: light.turn_on
+      target:
+        entity_id:
+          - light.rihinku
+          - light.lang_xia
+    # 4. フォールバック通知
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "夜のルーティンを開始します。"
+        language: ja
+
+# -----------------------------------------------------------------------------
 # 帰宅後作業（帰宅+5分）
 # -----------------------------------------------------------------------------
 - id: dynamic_home_chores

@@ -176,7 +176,7 @@
       target:
         entity_id: media_player.shu_zhai_hetuto_hou_you
       data:
-        media_content_id: "https://www.youtube.com/watch?v=feSVtC1BSeQ"
+        media_content_id: "https://www.youtube.com/watch?v=RmjQNmxILMg"
         media_content_type: video/youtube
 
 # 朝食点呼（06:20）
@@ -1145,6 +1145,35 @@
           - media_player.shu_zhai_hetuto_hou_you
       data:
         volume_level: 0.3
+
+# =============================================================================
+# テレビ電源制御（Tapo P110M）
+# =============================================================================
+# 18:00〜06:00はテレビ視聴禁止（子供の生活リズム維持）
+
+# 朝・テレビ電源ON（06:00）- ラジオ体操準備
+- id: tv_power_morning_on
+  alias: "テレビ電源・朝ON"
+  description: "朝6時にテレビ電源ON（ラジオ体操用）"
+  trigger:
+    - platform: time
+      at: "06:00:00"
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.rihinkuterehihuraku
+
+# 夕方・テレビ電源OFF（18:00）- 夜間視聴禁止
+- id: tv_power_evening_off
+  alias: "テレビ電源・夕方OFF"
+  description: "18時にテレビ電源OFF（夜間視聴禁止）"
+  trigger:
+    - platform: time
+      at: "18:00:00"
+  action:
+    - service: switch.turn_off
+      target:
+        entity_id: switch.rihinkuterehihuraku
 
 # =============================================================================
 # エアコン自動OFF（就寝時）

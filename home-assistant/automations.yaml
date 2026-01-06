@@ -746,6 +746,31 @@
 # 父・就寝（固定時刻）
 # =============================================================================
 
+# リビング消灯・TV OFF（20:30）- 娘就寝準備
+- id: living_lights_off_2030
+  alias: "リビング消灯（20:30）"
+  description: "20:30にリビング消灯とテレビOFF"
+  trigger:
+    - platform: time
+      at: "20:30:00"
+  action:
+    - service: light.turn_off
+      target:
+        entity_id: light.rihinku
+    - service: media_player.turn_off
+      target:
+        entity_id: media_player.lg_webos_tv_ur8000pjb
+    - service: switch.turn_off
+      target:
+        entity_id: switch.rihinkuterehihuraku
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "就寝の時間です。寝室に移動しましょう。"
+        language: ja
+
 # 父・就寝5分前（21:55）
 - id: father_sleep_5min_before
   alias: "父・就寝5分前"
@@ -1042,7 +1067,17 @@
       target:
         entity_id: button.send_signal_sakiyureta
 
-# 夜のサーキュレーターOFFは就寝準備（dynamic_bedtime_prep）で実行
+# 夕方・サーキュレーターOFF（18:00）
+- id: circulator_evening_off
+  alias: "サーキュレーター・夕方OFF"
+  description: "18時にサーキュレーター停止"
+  trigger:
+    - platform: time
+      at: "18:00:00"
+  action:
+    - service: button.press
+      target:
+        entity_id: button.send_signal_sakiyureta
 
 # =============================================================================
 # 温度アラート

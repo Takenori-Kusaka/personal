@@ -6,14 +6,14 @@
 
 - **対象**: 父(33歳エンジニア)、娘(4歳)、母(育休中)
 - **目的**: 時間管理と生活習慣の自動化
-- **Version**: 6.0 (動的スケジュール対応版)
+- **Version**: 6.2 (夜スケジュール固定時刻版)
 
-## v6.0 変更点
+## v6.2 変更点
 
-- 夜フェーズを固定時刻から「帰宅時刻基準」の動的スケジュールに変更
-- 完了済みタスクのスキップ機能を追加
-- 宿題時間を新規追加（帰宅+15分）
-- 定時「おかえり」を廃止、GPS検知のみに統一
+- 夜フェーズを動的スケジュールから固定時刻に変更
+- テンプレートトリガーの信頼性問題を解消
+- 20:30就寝を基準に逆算したスケジュール
+- TV電源はプラグレベル（Tapo P110M）で制御
 
 ## デバイス構成
 
@@ -49,11 +49,20 @@
 | 照度 | `sensor.illuminance_sensor_rihinku`, `_shu_zhai`, `_lang_xia`, `_remo` |
 | 人感 | `sensor.movement_sensor_rihinku`, `_shu_zhai`, `_lang_xia`, `_remo` |
 
+### サーキュレーター（部屋別）
+| 場所 | Entity ID |
+|------|-----------|
+| リビング | `button.send_signal_rihinkunosakiyureta` |
+| 書斎 | `button.send_signal_shu_zhai_nosakiyureta` |
+| 子供部屋 | `button.send_signal_sakiyureta` |
+| 寝室 | `button.send_signal_qin_shi_nosakiyureta` |
+
 ### その他デバイス
 | デバイス | Entity ID | 備考 |
 |----------|-----------|------|
-| サーキュレーター | `button.send_signal_sakiyureta` | 全部屋一括操作 |
 | GPS/Person | `person.ri_xia` | 日下（父） |
+| LG TV | `media_player.lg_webos_tv_ur8000pjb` | ラジオ体操YouTube再生用 |
+| TV電源プラグ | `switch.rihinkuterehihuraku` | Tapo P110M（リビングTV） |
 
 ### 廊下の常夜灯モード
 ```yaml
@@ -83,25 +92,27 @@ data:
 | 07:15 | 出発 (一部照明OFF) |
 | 07:45 | 在宅勤務開始 |
 
-### 夜フェーズ（動的スケジュール）
+### 夜フェーズ（固定時刻スケジュール）
 
-**帰宅時刻を基準に動的に計算**（例: 18:30帰宅の場合）
+**20:30ベッドイン、21:00就寝を基準にした固定時刻スケジュール**
 
-| 時刻 | オフセット | イベント |
-|------|------------|----------|
-| 18:00 | 固定 | お迎え準備 |
-| 18:30 | +0分 | GPS帰宅検知 → おかえりなさい |
-| 18:35 | +5分 | 帰宅後作業（手洗い等） |
-| 18:45 | +15分 | **宿題開始**（10分間） |
-| 18:55 | +25分 | 夕食開始 |
-| 19:25 | +55分 | 入浴開始 |
-| 19:45 | +75分 | 歯磨き |
-| 20:00 | +90分 | 就寝準備（巡検）+ サーキュレーターOFF |
-| 20:10 | +100分 | 娘・就寝（強制消灯）+ 父・洗濯物干し |
-| 21:55 | 固定 | 父・就寝5分前 |
-| 22:00 | 固定 | 父・就寝（廊下は常夜灯モード）|
-
-**完了済みスキップ機能**: 各タスクには完了フラグがあり、既に終わっていればスキップ
+| 時刻 | イベント |
+|------|----------|
+| 18:00 | お迎え準備 + サーキュレーターOFF + TV電源OFF |
+| 19:00 | GPS帰宅検知（またはフォールバック）→ おかえりなさい |
+| 19:05 | 帰宅後作業（手洗い、着替え、洗濯準備、お風呂掃除・沸かす） |
+| 19:15 | 夕食 |
+| 19:45 | 食器片付け |
+| 19:50 | お風呂 |
+| 20:05 | 風呂上がり（保湿・パジャマ） |
+| 20:10 | 洗濯物干し・明日の準備 |
+| 20:20 | 歯磨き・宿題 + サーキュレーターOFF |
+| 20:28 | トイレ・寝る準備 |
+| 20:30 | ベッドに入る（リビング消灯・廊下常夜灯・TV電源OFF） |
+| 20:45 | 子供部屋消灯 |
+| 21:00 | 就寝（実際に寝る時間） |
+| 21:55 | 父・就寝5分前 |
+| 22:00 | 父・就寝 |
 
 ## GPS/プレゼンス連動
 
@@ -149,17 +160,14 @@ input_boolean:
   - input_boolean.workday              # 平日フラグ
   - input_boolean.father_home          # 父在宅フラグ
   - input_boolean.night_cry_mode       # 夜泣きモード
-  # v6.0 新規
-  - input_boolean.evening_routine_started  # 夜ルーティン開始フラグ
-  - input_boolean.homework_completed       # 宿題完了
-  - input_boolean.dinner_completed         # 夕食完了
-  - input_boolean.bath_completed           # 入浴完了
-  - input_boolean.bedtime_prep_completed   # 就寝準備完了
+  - input_boolean.ye_ruteinkai_shi     # 夜ルーティン開始フラグ（GPSフォールバック用）
 
 input_datetime:
-  - input_datetime.mother_wakeup_time      # 母起床時刻
-  - input_datetime.actual_arrival_time     # 実際の帰宅時刻（自動記録）
+  - input_datetime.mother_wakeup_time             # 母起床時刻
+  - input_datetime.shi_ji_nogui_zhai_shi_guo      # 実際の帰宅時刻（GPS検知用）
 ```
+
+**注意**: v6.2で固定時刻スケジュールに変更したため、タスク完了フラグは不要になりました。
 
 **作成方法**: Home Assistant「設定」→「デバイスとサービス」→「ヘルパー」から作成
 詳細は `helpers.yaml` を参照

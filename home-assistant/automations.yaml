@@ -1,18 +1,29 @@
 # 自衛隊式スマートホーム規律システム
 # Home Assistant Automations
-# Version: 6.1 - 朝スケジュール改訂版
+# Version: 6.4 - 日本祝日対応版
+#
+# 変更点 (v6.4):
+# - 日本の祝日対応: binary_sensor.workday_sensor を使用
+# - 登園準備: 祝日も自動でスキップ（曜日条件 → workdayセンサー）
+# - 週次習慣: タオル交換、シーツ洗濯リマインダー追加（土曜07:00）
+# - 月次習慣: 消耗品交換リマインダー追加（毎月1日06:00）
+#
+# 変更点 (v6.3):
+# - ラジオ体操: webostv.command → media_player.play_media に変更（YouTube再生修正）
+# - ラジオ体操: TV電源OFF待機を4分→5分30秒に延長
+# - サーキュレーター: リビングのみに操作を限定
+# - 登園準備: 平日（月〜金）条件を追加（土曜日除外）
+#
+# 変更点 (v6.2):
+# - 夜フェーズを動的スケジュールから固定時刻に変更
+# - テンプレートトリガーの信頼性問題を解消
+# - 20:30就寝を基準に逆算したスケジュール
 #
 # 変更点 (v6.1):
 # - 朝スケジュールを10分前倒し（父05:40起床、娘05:50起床）
 # - ラジオ体操（06:12）を追加（TTS + YouTube再生）
 # - 登園準備を06:45に前倒し（トイレ・着替え時間確保）
 # - 06:20/06:25の重複通知を削除
-#
-# 変更点 (v6.0):
-# - 夜フェーズを固定時刻から「帰宅時刻基準」の動的スケジュールに変更
-# - 完了済みタスクのスキップ機能を追加
-# - 宿題時間を新規追加
-# - 定時「おかえり」を廃止、GPS検知のみに統一
 
 # =============================================================================
 # デバイス設定
@@ -36,16 +47,16 @@
 #   人感: sensor.movement_sensor_rihinku, _shu_zhai, _lang_xia, _remo (最終検知時刻)
 # -----------------------------------------------------------------------------
 # その他:
-#   サーキュレーター: button.send_signal_sakiyureta (全部屋一括)
+#   サーキュレーター（部屋別）:
+#     リビング: button.send_signal_rihinkunosakiyureta
+#     書斎: button.send_signal_shu_zhai_nosakiyureta
+#     子供部屋: button.send_signal_sakiyureta
+#     寝室: button.send_signal_qin_shi_nosakiyureta
 #   GPS/Person: person.ri_xia (日下)
 # -----------------------------------------------------------------------------
 # Helper Entity (作成済み):
 #   input_datetime.shi_ji_nogui_zhai_shi_guo - 実際の帰宅時刻
 #   input_boolean.ye_ruteinkai_shi - 夜ルーティン開始フラグ
-#   input_boolean.su_ti_wan_liao - 宿題完了フラグ
-#   input_boolean.xi_shi_wan_liao - 夕食完了フラグ
-#   input_boolean.ru_yu_wan_liao - 入浴完了フラグ
-#   input_boolean.jiu_qin_zhun_bei_wan_liao - 就寝準備完了フラグ
 # =============================================================================
 
 # =============================================================================
@@ -55,13 +66,13 @@
 # 父・起床（05:40）
 - id: father_wakeup
   alias: "父・起床"
-  description: "父の起床時刻"
+  description: "父の起床時刻（平日・祝日除く）"
   trigger:
     - platform: time
       at: "05:40:00"
   condition:
     - condition: state
-      entity_id: input_boolean.workday
+      entity_id: binary_sensor.workday_sensor
       state: "on"
   action:
     # 書斎・リビング・廊下を点灯（常夜灯→通常モード）
@@ -176,23 +187,24 @@
     # 2. LG TVの電源ON
     - service: media_player.turn_on
       target:
-        entity_id: media_player.lg_webos_tv_ur8000pjb
+        entity_id: media_player.lg_webos_tv_55ur8000pjb
     - delay:
         seconds: 5
     # 3. ラジオ体操第一をLG TVで再生（YouTube）
     - service: media_player.play_media
       target:
-        entity_id: media_player.lg_webos_tv_ur8000pjb
+        entity_id: media_player.lg_webos_tv_55ur8000pjb
       data:
-        media_content_id: "https://www.youtube.com/watch?v=RmjQNmxILMg"
-        media_content_type: video/youtube
-    # 4. ラジオ体操終了まで待機（約4分）
+        media_content_type: video
+        media_content_id: "https://www.youtube.com/watch?v=f1T5rUipf2M"
+    # 4. ラジオ体操終了まで待機（5分30秒 = 動画3分 + 広告/起動遅延）
     - delay:
-        minutes: 4
+        minutes: 5
+        seconds: 30
     # 5. TV電源OFF（テレビ中毒対策）
     - service: media_player.turn_off
       target:
-        entity_id: media_player.lg_webos_tv_ur8000pjb
+        entity_id: media_player.lg_webos_tv_55ur8000pjb
     - service: switch.turn_off
       target:
         entity_id: switch.rihinkuterehihuraku
@@ -266,9 +278,14 @@
 # 登園準備開始（06:45）- 15分前倒しでトイレ・着替え時間確保
 - id: departure_prep_start
   alias: "登園準備開始"
+  description: "平日のみ（祝日除く）"
   trigger:
     - platform: time
       at: "06:45:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.workday_sensor
+      state: "on"
   action:
     - service: tts.speak
       target:
@@ -281,9 +298,14 @@
 # 出発5分前（07:10）
 - id: departure_5min_before
   alias: "出発5分前"
+  description: "平日のみ（祝日除く）"
   trigger:
     - platform: time
       at: "07:10:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.workday_sensor
+      state: "on"
   action:
     - service: tts.speak
       target:
@@ -306,9 +328,14 @@
 # 出発（07:15）- 照明OFF
 - id: departure
   alias: "出発"
+  description: "平日のみ（祝日除く）"
   trigger:
     - platform: time
       at: "07:15:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.workday_sensor
+      state: "on"
   action:
     - service: light.turn_off
       target:
@@ -320,10 +347,14 @@
 # 在宅勤務開始（07:45）
 - id: work_start
   alias: "在宅勤務開始"
+  description: "平日のみ（祝日除く）"
   trigger:
     - platform: time
       at: "07:45:00"
   condition:
+    - condition: state
+      entity_id: binary_sensor.workday_sensor
+      state: "on"
     - condition: state
       entity_id: input_boolean.father_home
       state: "on"
@@ -337,18 +368,35 @@
         language: ja
 
 # =============================================================================
-# 夜フェーズ（動的スケジュール）
+# 夜フェーズ（固定時刻スケジュール）
 # =============================================================================
-# スケジュール: 帰宅 → +5分: 帰宅後作業 → +15分: 宿題 → +25分: 夕食
-#              → +55分: 入浴 → +75分: 歯磨き → +90分: 就寝準備 → +100分: 就寝
+# スケジュール（20:30ベッドイン、21:00就寝を基準）:
+#   18:00 - お迎え準備 + サーキュレーターOFF + TV電源OFF
+#   19:00 - 帰宅（GPS検知またはフォールバック）
+#   19:05 - 帰宅後作業（手洗い、着替え、洗濯準備、お風呂掃除・沸かす）
+#   19:15 - 夕食
+#   19:45 - 食器片付け
+#   19:50 - お風呂
+#   20:05 - 風呂上がり（保湿・パジャマ）
+#   20:10 - 洗濯物干し・明日の準備
+#   20:20 - 歯磨き・宿題 + サーキュレーターOFF
+#   20:28 - トイレ・寝る準備
+#   20:30 - ベッドに入る（リビング消灯・廊下常夜灯・TV電源OFF）
+#   20:45 - 子供部屋消灯
+#   21:00 - 就寝（実際に寝る時間）
 # =============================================================================
 
 # お迎え準備（18:00）- 固定時刻
 - id: pickup_reminder
   alias: "お迎え準備"
+  description: "平日のみ（祝日除く）"
   trigger:
     - platform: time
       at: "18:00:00"
+  condition:
+    - condition: state
+      entity_id: binary_sensor.workday_sensor
+      state: "on"
   action:
     - service: tts.speak
       target:
@@ -370,18 +418,13 @@
   action:
     - service: input_boolean.turn_off
       target:
-        entity_id:
-          - input_boolean.ye_ruteinkai_shi
-          - input_boolean.su_ti_wan_liao
-          - input_boolean.xi_shi_wan_liao
-          - input_boolean.ru_yu_wan_liao
-          - input_boolean.jiu_qin_zhun_bei_wan_liao
+        entity_id: input_boolean.ye_ruteinkai_shi
 
 # -----------------------------------------------------------------------------
-# GPS帰宅検知 → 夜ルーティン開始（動的）
+# GPS帰宅検知 → 夜ルーティン開始
 # -----------------------------------------------------------------------------
-- id: gps_arriving_home_dynamic
-  alias: "GPS・帰宅検知（動的スケジュール）"
+- id: gps_arriving_home
+  alias: "GPS・帰宅検知"
   description: "帰宅時に時刻を記録し、夜ルーティンを開始"
   trigger:
     - platform: state
@@ -468,97 +511,42 @@
         language: ja
 
 # -----------------------------------------------------------------------------
-# 帰宅後作業（帰宅+5分）
+# 帰宅後作業（19:05）- 手洗い、着替え、洗濯準備、お風呂準備
 # -----------------------------------------------------------------------------
-- id: dynamic_home_chores
-  alias: "帰宅後作業（動的）"
-  description: "帰宅5分後に手洗い等の指示"
+- id: fixed_home_chores
+  alias: "帰宅後作業（19:05）"
+  description: "19:05に帰宅後の作業指示"
   trigger:
-    - platform: template
-      value_template: >
-        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
-          {% set arrival_time = today_at(arrival) %}
-          {% set target_time = arrival_time + timedelta(minutes=5) %}
-          {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
-        {% else %}
-          false
-        {% endif %}
+    - platform: time
+      at: "19:05:00"
   action:
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "手洗い、洗濯機、お風呂の準備をお願いします。"
-        language: ja
-
-# -----------------------------------------------------------------------------
-# 宿題開始（帰宅+15分）- 新規追加
-# -----------------------------------------------------------------------------
-- id: dynamic_homework_start
-  alias: "宿題開始（動的）"
-  description: "帰宅15分後に宿題・デスク時間開始"
-  trigger:
-    - platform: template
-      value_template: >
-        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
-          {% set arrival_time = today_at(arrival) %}
-          {% set target_time = arrival_time + timedelta(minutes=15) %}
-          {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
-        {% else %}
-          false
-        {% endif %}
-  condition:
-    - condition: state
-      entity_id: input_boolean.su_ti_wan_liao
-      state: "off"
-  action:
-    - service: tts.speak
-      target:
-        entity_id: tts.google_translate_en_com
-      data:
-        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "宿題の時間です。机に向かってお勉強しましょう。10分間集中してね。"
+        message: "手洗いうがい、着替え、洗濯物の準備をしてください。お風呂の掃除と沸かすボタンもお願いします。"
         language: ja
     - delay:
         seconds: 3
-    # 子供部屋
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.zi_gong_bu_wu
-        message: "宿題の時間です。机に向かってお勉強しましょう。"
+        message: "手洗いうがいをして、お着替えしてね。脱いだ服とカバンの服を洗濯機に入れてね。"
         language: ja
 
 # -----------------------------------------------------------------------------
-# 夕食開始（帰宅+25分）
+# 夕食開始（19:15）
 # -----------------------------------------------------------------------------
-- id: dynamic_dinner_start
-  alias: "夕食開始（動的）"
-  description: "帰宅25分後に夕食開始"
+- id: fixed_dinner_start
+  alias: "夕食開始（19:15）"
+  description: "19:15に夕食開始"
   trigger:
-    - platform: template
-      value_template: >
-        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
-          {% set arrival_time = today_at(arrival) %}
-          {% set target_time = arrival_time + timedelta(minutes=25) %}
-          {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
-        {% else %}
-          false
-        {% endif %}
-  condition:
-    - condition: state
-      entity_id: input_boolean.xi_shi_wan_liao
-      state: "off"
+    - platform: time
+      at: "19:15:00"
   action:
-    # 宿題完了をマーク
-    - service: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.su_ti_wan_liao
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
@@ -568,144 +556,217 @@
         language: ja
 
 # -----------------------------------------------------------------------------
-# 入浴開始（帰宅+55分）
+# 食器片付け（19:45）
 # -----------------------------------------------------------------------------
-- id: dynamic_bath_start
-  alias: "入浴開始（動的）"
-  description: "帰宅55分後に入浴開始"
+- id: fixed_cleanup
+  alias: "食器片付け（19:45）"
+  description: "19:45に食器片付け"
   trigger:
-    - platform: template
-      value_template: >
-        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
-          {% set arrival_time = today_at(arrival) %}
-          {% set target_time = arrival_time + timedelta(minutes=55) %}
-          {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
-        {% else %}
-          false
-        {% endif %}
-  condition:
-    - condition: state
-      entity_id: input_boolean.ru_yu_wan_liao
-      state: "off"
+    - platform: time
+      at: "19:45:00"
   action:
-    # 夕食完了をマーク
-    - service: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.xi_shi_wan_liao
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "ごちそうさまでした。お風呂の時間です。"
+        message: "ごちそうさまでした。食器を片付けてください。"
         language: ja
 
 # -----------------------------------------------------------------------------
-# 歯磨き（帰宅+75分）
+# 入浴開始（19:50）
 # -----------------------------------------------------------------------------
-- id: dynamic_teeth_brushing
-  alias: "歯磨き（動的）"
-  description: "帰宅75分後に歯磨き指示"
+- id: fixed_bath_start
+  alias: "入浴開始（19:50）"
+  description: "19:50に入浴開始"
   trigger:
-    - platform: template
-      value_template: >
-        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
-          {% set arrival_time = today_at(arrival) %}
-          {% set target_time = arrival_time + timedelta(minutes=75) %}
-          {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
-        {% else %}
-          false
-        {% endif %}
-  condition:
-    - condition: state
-      entity_id: input_boolean.ru_yu_wan_liao
-      state: "off"
+    - platform: time
+      at: "19:50:00"
   action:
-    # 入浴完了をマーク
-    - service: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.ru_yu_wan_liao
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "お風呂お疲れさまでした。洗面台で歯を磨いてください。"
+        message: "お風呂の時間です。"
         language: ja
 
 # -----------------------------------------------------------------------------
-# 就寝準備（帰宅+90分）
+# 風呂上がり（20:05）- 保湿・パジャマ
 # -----------------------------------------------------------------------------
-- id: dynamic_bedtime_prep
-  alias: "就寝準備（動的）"
-  description: "帰宅90分後に就寝準備（巡検・布団）"
+- id: fixed_after_bath
+  alias: "風呂上がり（20:05）"
+  description: "20:05に風呂上がりの指示"
   trigger:
-    - platform: template
-      value_template: >
-        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
-          {% set arrival_time = today_at(arrival) %}
-          {% set target_time = arrival_time + timedelta(minutes=90) %}
-          {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
-        {% else %}
-          false
-        {% endif %}
-  condition:
-    - condition: state
-      entity_id: input_boolean.jiu_qin_zhun_bei_wan_liao
-      state: "off"
+    - platform: time
+      at: "20:05:00"
   action:
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "巡検の時間です。明日の服と持ち物を見せてください。確認したら布団に入る準備をしましょう。"
+        message: "お風呂お疲れさまでした。保湿クリームを塗ってパジャマに着替えてください。"
+        language: ja
+
+# -----------------------------------------------------------------------------
+# 洗濯物干し・明日の準備（20:10）
+# -----------------------------------------------------------------------------
+- id: fixed_laundry_prep
+  alias: "洗濯物干し・明日の準備（20:10）"
+  description: "20:10に洗濯物干しと明日の準備"
+  trigger:
+    - platform: time
+      at: "20:10:00"
+  action:
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "洗濯物を干して、明日の準備をしましょう。カバンに保育園の荷物を入れてください。"
         language: ja
     - delay:
         seconds: 3
-    # 子供部屋
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
       data:
         media_player_entity_id: media_player.zi_gong_bu_wu
-        message: "巡検の時間です。明日の服と持ち物を見せてください。"
+        message: "自分の洗濯物を干してね。明日の準備もしてね。"
         language: ja
-    # サーキュレーターOFF
-    - service: button.press
-      target:
-        entity_id: button.send_signal_sakiyureta
 
 # -----------------------------------------------------------------------------
-# 娘・就寝（帰宅+100分）
+# 歯磨き・宿題（20:20）
 # -----------------------------------------------------------------------------
-- id: dynamic_daughter_sleep
-  alias: "娘・就寝（動的）"
-  description: "帰宅100分後に娘就寝（強制消灯）"
+- id: fixed_teeth_homework
+  alias: "歯磨き・宿題（20:20）"
+  description: "20:20に歯磨きと宿題"
   trigger:
-    - platform: template
-      value_template: >
-        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
-          {% set arrival_time = today_at(arrival) %}
-          {% set target_time = arrival_time + timedelta(minutes=100) %}
-          {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
-        {% else %}
-          false
-        {% endif %}
+    - platform: time
+      at: "20:20:00"
   action:
-    # 就寝準備完了をマーク
-    - service: input_boolean.turn_on
+    - service: tts.speak
       target:
-        entity_id: input_boolean.jiu_qin_zhun_bei_wan_liao
-    # 子供部屋消灯
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "歯を磨いて、宿題をしましょう。"
+        language: ja
+    - delay:
+        seconds: 3
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.zi_gong_bu_wu
+        message: "歯を磨いてね。宿題もやってね。"
+        language: ja
+    # リビングサーキュレーターOFF（就寝準備）
+    - service: button.press
+      target:
+        entity_id: button.send_signal_rihinkunosakiyureta
+
+# -----------------------------------------------------------------------------
+# トイレ・寝る準備（20:28）
+# -----------------------------------------------------------------------------
+- id: fixed_toilet_bedprep
+  alias: "トイレ・寝る準備（20:28）"
+  description: "20:28にトイレと寝る準備"
+  trigger:
+    - platform: time
+      at: "20:28:00"
+  action:
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "トイレに行って、寝る準備をしてください。"
+        language: ja
+    - delay:
+        seconds: 3
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.zi_gong_bu_wu
+        message: "トイレに行って、ベッドに入る準備をしてね。"
+        language: ja
+
+# =============================================================================
+# 父・就寝（固定時刻）
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 娘・就寝（20:30）- リビング消灯・TV電源OFF・子供部屋消灯
+# -----------------------------------------------------------------------------
+- id: fixed_daughter_bedtime
+  alias: "娘・就寝準備（20:30）"
+  description: "20:30にリビング消灯・廊下常夜灯・TV電源OFF"
+  trigger:
+    - platform: time
+      at: "20:30:00"
+  action:
+    # リビング消灯
+    - service: light.turn_off
+      target:
+        entity_id: light.rihinku
+    # 廊下を常夜灯モードに
+    - service: select.select_option
+      target:
+        entity_id: select.signals_lang_xia
+      data:
+        option: "4. night"
+    - service: button.press
+      target:
+        entity_id: button.send_signal_lang_xia
+    # TV電源OFF（LG TV + 電源プラグ）
+    - service: media_player.turn_off
+      target:
+        entity_id: media_player.lg_webos_tv_55ur8000pjb
+    - service: switch.turn_off
+      target:
+        entity_id: switch.rihinkuterehihuraku
+    # リビングで寝室移動指示
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "就寝の時間です。寝室に移動しましょう。"
+        language: ja
+    - delay:
+        seconds: 3
+    # 子供部屋で寝室移動指示
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.zi_gong_bu_wu
+        message: "寝室に移動してね。"
+        language: ja
+
+# -----------------------------------------------------------------------------
+# 娘・消灯（20:45）- 子供部屋強制消灯
+# -----------------------------------------------------------------------------
+- id: fixed_daughter_lights_out
+  alias: "娘・消灯（20:45）"
+  description: "20:45に子供部屋消灯"
+  trigger:
+    - platform: time
+      at: "20:45:00"
+  action:
+    # 子供部屋消灯（状態同期のため turn_on → turn_off）
+    - service: light.turn_on
+      target:
+        entity_id: light.zi_gong_bu_wu
+    - delay:
+        seconds: 1
     - service: light.turn_off
       target:
         entity_id: light.zi_gong_bu_wu
-    # 子供部屋スピーカーでおやすみ
+    # おやすみ
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
@@ -714,69 +775,12 @@
         message: "おやすみなさい。"
         language: ja
 
-# -----------------------------------------------------------------------------
-# 父・洗濯物干し（娘就寝と同時）
-# -----------------------------------------------------------------------------
-- id: dynamic_father_laundry
-  alias: "父・洗濯物干し（動的）"
-  description: "娘就寝時に洗濯物干しリマインド"
-  trigger:
-    - platform: template
-      value_template: >
-        {% set arrival = states('input_datetime.shi_ji_nogui_zhai_shi_guo') %}
-        {% if arrival not in ['unknown', 'unavailable', ''] and is_state('input_boolean.ye_ruteinkai_shi', 'on') %}
-          {% set arrival_time = today_at(arrival) %}
-          {% set target_time = arrival_time + timedelta(minutes=100) %}
-          {{ now() >= target_time and now() < target_time + timedelta(minutes=1) }}
-        {% else %}
-          false
-        {% endif %}
-  action:
-    - delay:
-        seconds: 5
-    - service: tts.speak
-      target:
-        entity_id: tts.google_translate_en_com
-      data:
-        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "洗濯物を干す時間です。"
-        language: ja
-
-# =============================================================================
-# 父・就寝（固定時刻）
-# =============================================================================
-
-# リビング消灯・TV OFF（20:30）- 娘就寝準備
-- id: living_lights_off_2030
-  alias: "リビング消灯（20:30）"
-  description: "20:30にリビング消灯とテレビOFF"
-  trigger:
-    - platform: time
-      at: "20:30:00"
-  action:
-    - service: light.turn_off
-      target:
-        entity_id: light.rihinku
-    - service: media_player.turn_off
-      target:
-        entity_id: media_player.lg_webos_tv_ur8000pjb
-    - service: switch.turn_off
-      target:
-        entity_id: switch.rihinkuterehihuraku
-    - service: tts.speak
-      target:
-        entity_id: tts.google_translate_en_com
-      data:
-        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
-        message: "就寝の時間です。寝室に移動しましょう。"
-        language: ja
-
-# 父・就寝5分前（21:55）
+# 父・就寝5分前（21:25）
 - id: father_sleep_5min_before
   alias: "父・就寝5分前"
   trigger:
     - platform: time
-      at: "21:55:00"
+      at: "21:25:00"
   action:
     - service: tts.speak
       target:
@@ -786,13 +790,13 @@
         message: "就寝5分前です。"
         language: ja
 
-# 父・就寝（22:00）- 全館消灯
+# 父・就寝（21:30）- 全館消灯
 - id: father_sleep
   alias: "父・就寝"
   description: "父の就寝時刻（廊下は常夜灯モードに切替）"
   trigger:
     - platform: time
-      at: "22:00:00"
+      at: "21:30:00"
   action:
     - service: light.turn_off
       target:
@@ -805,6 +809,9 @@
         entity_id: select.signals_lang_xia
       data:
         option: "4. night"
+    - service: button.press
+      target:
+        entity_id: button.send_signal_lang_xia
     - service: tts.speak
       target:
         entity_id: tts.google_translate_en_com
@@ -931,6 +938,27 @@
         message: "明日は燃えないゴミとペットボトルの日です。分別して出してください。"
         language: ja
 
+- id: garbage_nonburnable_morning
+  alias: "ゴミ出し・燃えないゴミ/ペットボトル（当日朝）"
+  description: "第1・3木曜日の朝にリマインド"
+  trigger:
+    - platform: time
+      at: "05:50:00"
+  condition:
+    - condition: template
+      value_template: >
+        {{ now().weekday() == 3 and
+           (1 <= now().day <= 7 or
+            15 <= now().day <= 21) }}
+  action:
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "今日は燃えないゴミとペットボトルの日です。出発前に出してください。"
+        language: ja
+
 - id: garbage_bulky_20260127
   alias: "ゴミ出し・粗大ごみ（2026/1/27）"
   description: "2026年1月27日の粗大ごみ収集前日リマインド"
@@ -987,6 +1015,80 @@
       data:
         media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
         message: "今日はお弁当の日です。お弁当の準備を忘れずに。"
+        language: ja
+
+# =============================================================================
+# 週次・月次習慣リマインダー
+# =============================================================================
+
+# 土曜日・タオル交換（07:00）
+- id: weekly_towel_change
+  alias: "週次・タオル交換"
+  description: "毎週土曜日の朝にタオル交換リマインド"
+  trigger:
+    - platform: time
+      at: "07:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - sat
+  action:
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "土曜日です。家中のタオルを新しいものに交換しましょう。"
+        language: ja
+
+# 土曜日・シーツ洗濯（07:00）
+- id: weekly_sheets_laundry
+  alias: "週次・シーツ洗濯"
+  description: "毎週土曜日の朝にシーツ洗濯リマインド"
+  trigger:
+    - platform: time
+      at: "07:00:00"
+  condition:
+    - condition: time
+      weekday:
+        - sat
+  action:
+    - delay:
+        seconds: 10
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "みんなで布団のシーツを外して洗濯機に入れましょう。"
+        language: ja
+    - delay:
+        seconds: 3
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.zi_gong_bu_wu
+        message: "シーツを外してね。お手伝いお願いします。"
+        language: ja
+
+# 毎月1日・消耗品交換（06:00）
+- id: monthly_consumables_change
+  alias: "月次・消耗品交換"
+  description: "毎月1日の朝に消耗品交換リマインド"
+  trigger:
+    - platform: time
+      at: "06:00:00"
+  condition:
+    - condition: template
+      value_template: "{{ now().day == 1 }}"
+  action:
+    - service: tts.speak
+      target:
+        entity_id: tts.google_translate_en_com
+      data:
+        media_player_entity_id: media_player.shu_zhai_hetuto_hou_you
+        message: "月初めです。歯ブラシ、食器スポンジなどの消耗品を新しいものに交換しましょう。"
         language: ja
 
 # =============================================================================
@@ -1054,7 +1156,7 @@
 
 - id: circulator_morning_on
   alias: "サーキュレーター・朝ON"
-  description: "朝5:50にサーキュレーター起動"
+  description: "朝5:50にリビングのサーキュレーター起動"
   trigger:
     - platform: time
       at: "05:50:00"
@@ -1063,21 +1165,23 @@
       entity_id: person.ri_xia
       state: "home"
   action:
+    # リビングのみ（他の部屋は操作不要）
     - service: button.press
       target:
-        entity_id: button.send_signal_sakiyureta
+        entity_id: button.send_signal_rihinkunosakiyureta
 
 # 夕方・サーキュレーターOFF（18:00）
 - id: circulator_evening_off
   alias: "サーキュレーター・夕方OFF"
-  description: "18時にサーキュレーター停止"
+  description: "18時にリビングのサーキュレーター停止"
   trigger:
     - platform: time
       at: "18:00:00"
   action:
+    # リビングのみ（他の部屋は操作不要）
     - service: button.press
       target:
-        entity_id: button.send_signal_sakiyureta
+        entity_id: button.send_signal_rihinkunosakiyureta
 
 # =============================================================================
 # 温度アラート

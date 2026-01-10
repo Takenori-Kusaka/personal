@@ -1,6 +1,6 @@
 # Home Assistant プロジェクト - Claude Code 作業メモ
 
-## 現在のバージョン: 6.0 (動的スケジュール対応版)
+## 現在のバージョン: 6.4 (日本祝日対応版)
 
 ## サーバーアクセス情報
 
@@ -28,6 +28,13 @@ ssh kusaka-server@192.168.68.79 "del C:\\homeassistant\\config\\automations.yaml
 # 4. ローカルの一時ファイル削除
 rm automations_base64.txt
 ```
+
+### Workdayセンサー（UI設定済み）
+
+Workdayインテグレーションは**Home Assistant UIから設定**:
+- 設定 → デバイスとサービス → 統合を追加 → Workday
+- 国: Japan、勤務日: mon-fri、除外: sat, sun, holiday
+- Entity ID: `binary_sensor.workday_sensor`
 
 ## 家族構成
 
@@ -83,11 +90,20 @@ rm automations_base64.txt
 
 **注意**: 21時に全エアコン自動OFF（就寝時節電）
 
+### サーキュレーター（部屋別）
+| 場所 | Entity ID |
+|------|-----------|
+| リビング | `button.send_signal_rihinkunosakiyureta` |
+| 書斎 | `button.send_signal_shu_zhai_nosakiyureta` |
+| 子供部屋 | `button.send_signal_sakiyureta` |
+| 寝室 | `button.send_signal_qin_shi_nosakiyureta` |
+
 ### その他デバイス
 | デバイス | Entity ID | 備考 |
 |----------|-----------|------|
-| サーキュレーター | `button.send_signal_sakiyureta` | 全部屋一括、トグル動作 |
 | 廊下常夜灯 | `select.signals_lang_xia` | option: "4. night" |
+| LG TV | `media_player.lg_webos_tv_ur8000pjb` | ラジオ体操YouTube再生用 |
+| TV電源プラグ | `switch.rihinkuterehihuraku` | Tapo P110M（リビングTV） |
 
 ## 運用上の制約
 
@@ -113,8 +129,12 @@ rm automations_base64.txt
 ## Helper Entity (作成済み)
 
 ```yaml
+# 日本祝日対応センサー（workday.yamlで定義）
+binary_sensor:
+  - binary_sensor.workday_sensor        # 平日判定（祝日自動除外）
+
 input_boolean:
-  - input_boolean.workday              # 平日フラグ
+  - input_boolean.workday              # 平日フラグ（非推奨、workday_japanを使用）
   - input_boolean.father_home          # 父在宅フラグ
   - input_boolean.night_cry_mode       # 夜泣きモード
   # v6.0 新規（動的スケジュール用）- 実際のEntity ID
@@ -129,20 +149,33 @@ input_datetime:
   - input_datetime.shi_ji_nogui_zhai_shi_guo      # 実際の帰宅時刻（GPS検知で自動記録）
 ```
 
-## 夜フェーズ動的スケジュール（v6.0）
+## 夜フェーズ固定スケジュール（v6.2）
 
-| オフセット | イベント |
-|------------|----------|
-| +0分 | GPS帰宅検知 → おかえりなさい + 時刻記録 |
-| +5分 | 帰宅後作業（手洗い等） |
-| +15分 | 宿題開始（10分間） |
-| +25分 | 夕食開始 |
-| +55分 | 入浴開始 |
-| +75分 | 歯磨き |
-| +90分 | 就寝準備（巡検）+ サーキュレーターOFF |
-| +100分 | 娘・就寝（強制消灯）+ 父・洗濯物干し |
+| 時刻 | イベント |
+|------|----------|
+| 18:00 | お迎え準備 + サーキュレーターOFF + TV電源OFF |
+| 19:00 | GPS帰宅検知（またはフォールバック）→ おかえりなさい |
+| 19:05 | 帰宅後作業（手洗い、着替え、洗濯準備、お風呂掃除・沸かす） |
+| 19:15 | 夕食 |
+| 19:45 | 食器片付け |
+| 19:50 | お風呂 |
+| 20:05 | 風呂上がり（保湿・パジャマ） |
+| 20:10 | 洗濯物干し・明日の準備 |
+| 20:20 | 歯磨き・宿題 + サーキュレーターOFF |
+| 20:28 | トイレ・寝る準備 |
+| 20:30 | ベッドに入る（リビング消灯・廊下常夜灯・TV電源OFF） |
+| 20:45 | 子供部屋消灯 |
+| 21:00 | 就寝（実際に寝る時間） |
 
-**完了フラグ**: 各タスクに `input_boolean.*_completed` があり、条件分岐でスキップ可能
+**注**: v6.2で動的スケジュールから固定時刻に変更。テンプレートトリガーの信頼性問題を解消。
+
+## 週次・月次習慣リマインダー
+
+| 頻度 | 内容 | 時刻 |
+|------|------|------|
+| 毎週土曜 | タオル交換 | 07:00 |
+| 毎週土曜 | シーツ洗濯 | 07:00 |
+| 毎月1日 | 消耗品交換（歯ブラシ、スポンジ等） | 06:00 |
 
 ## ゴミ収集日 (B3地区・梅美台6丁目)
 
@@ -154,7 +187,8 @@ input_datetime:
 
 ## 今後の拡張予定
 
-- [ ] 子供部屋スピーカー導入 (`media_player.kodomo_heya`)
+- [x] 日本の祝日対応 (`binary_sensor.workday_sensor`) ← v6.4で対応済み
+- [x] 子供部屋スピーカー導入 (`media_player.zi_gong_bu_wu`) ← 導入済み
 - [ ] Phase 2: 夜泣き対応 (2026年2月〜)
 - [ ] Companion App通知の有効化
 - [ ] Proximity統合（帰宅500m前点灯）
